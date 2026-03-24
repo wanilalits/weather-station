@@ -1,0 +1,31 @@
+✅ Set local Git username & email (This will override global config only for this repo:)
+git config user.name "wanilalits"
+git config user.email "your-email@example.com"
+
+✅Verify it
+git config user.name
+git config user.email
+or
+git remote -v
+
+✅Common Repo for Frontend and Backend (Remove inner git and use one root repo:)
+rm -rf frontend/.git
+rm -rf backend/.git
+
+✅
+git add .
+git commit -m "Fix turbopack build issue"
+git push
+
+✅run dev -- --host
+
+✅see your commit history
+git log
+git log -5
+git log --oneline
+
+✅ Check global Git account (default)
+git config --global user.name
+git config --global user.email
+
+
