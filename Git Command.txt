@@ -1,21 +1,29 @@
-✅ Set local Git username & email (This will override global config only for this repo:)
-git config user.name "wanilalits"
-git config user.email "your-email@example.com"
+git init
 
-✅Verify it
-git config user.name
+✅ Set local Git username & email (my identity only) (This will override global config only for this repo:)
+git config user.name "wanilalits"
+git config user.email "wanilalits@gmail.com"
+
+✅Verify it (my identity)
+git config user.name 
 git config user.email
-or
+
+✅ Replace existing remote (where my code goes and came from)
+git remote remove origin
+git remote add origin https://github.com/wanilalits/weather-station.git
+
+✅ Verify (where my code goes and came from)
 git remote -v
+
+✅
+git add .
+git commit -m "#"
+git push //first time (git push -u origin main)
 
 ✅Common Repo for Frontend and Backend (Remove inner git and use one root repo:)
 rm -rf frontend/.git
 rm -rf backend/.git
 
-✅
-git add .
-git commit -m "Fix turbopack build issue"
-git push
 
 ✅run dev -- --host
 
@@ -28,4 +36,22 @@ git log --oneline
 git config --global user.name
 git config --global user.email
 
+✅ 1. Check current branch
+git branch
+
+✅ 2. Create new branch (👉 Only creates (does NOT switch)
+git branch feature-login
+
+✅ 3. Switch branch (👉 Now you're working in that branch)
+git checkout feature-login
+
+⚡ Shortcut (create + switch)
+git checkout -b feature-login
+
+Passkey Disable/Enable
+git config --local commit.gpgsign false
+git config --local commit.gpgsign true //(enable again)
+
+
+gh auth login
 
