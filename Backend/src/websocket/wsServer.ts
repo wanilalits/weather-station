@@ -1,31 +1,32 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import cron from 'node-cron';
 import Sensor from '../modules/sensor/sensor.model';
+import { Server } from 'http';
 
 let wss: WebSocketServer;
-const obj = { name: 'Lalit', age: 25,};
+
 // Buffer
 const dataBuffer: any[] = [];
 
 // ✅ Store active clients
-const activeClients = new Map<string, any>();
-// key = deviceId, value = ws
+const activeClients = new Map<string, WebSocket>();
 
-export const initWebSocket = (server: any) => {
+// ✅ INIT (attach to HTTP server)
+export const initWebSocket = (server: Server) => {
   wss = new WebSocketServer({ server });
 
   console.log('✅ WebSocket server started');
 
   wss.on('connection', (ws: any, req) => {
-    console.log('✅ Client connected');
     const ip = req.socket.remoteAddress;
     const port = req.socket.remotePort;
 
-    console.log(`Client connected: ${ip}:${port}`);
+    console.log(`✅ Client connected: ${ip}:${port}`);
+
     ws.isAlive = true;
     ws.deviceId = null;
 
-    // welcome
+    // ✅ welcome
     ws.send(
       JSON.stringify({
         type: 'welcome',
@@ -33,12 +34,12 @@ export const initWebSocket = (server: any) => {
       })
     );
 
-    // pong (heartbeat)
+    // ✅ heartbeat pong
     ws.on('pong', () => {
       ws.isAlive = true;
     });
 
-    // receive
+    // ✅ receive data
     ws.on('message', (message: any) => {
       try {
         const data = JSON.parse(message.toString());
@@ -47,7 +48,7 @@ export const initWebSocket = (server: any) => {
 
         const { deviceId, humidity } = data;
 
-        // ✅ Save deviceId & register active client
+        // ✅ register device
         if (deviceId) {
           ws.deviceId = deviceId;
           activeClients.set(deviceId, ws);
@@ -60,8 +61,8 @@ export const initWebSocket = (server: any) => {
           time: new Date(),
         });
 
-        // ✅ conditional broadcast
-        if (humidity > 70) {
+        // ✅ safe condition
+        if (typeof humidity === 'number' && humidity > 70) {
           broadcast({
             type: 'alert',
             message: 'High humidity!',
@@ -69,7 +70,7 @@ export const initWebSocket = (server: any) => {
           });
         }
 
-        // ack
+        // ✅ ack
         ws.send(
           JSON.stringify({
             type: 'ack',
@@ -81,18 +82,17 @@ export const initWebSocket = (server: any) => {
       }
     });
 
-    // close
+    // ✅ disconnect
     ws.on('close', () => {
       console.log('❌ Client disconnected');
 
-      // ✅ remove from active clients
       if (ws.deviceId) {
         activeClients.delete(ws.deviceId);
       }
     });
   });
 
-  // 🔥 Heartbeat (inactive client handling)
+  // 🔥 Heartbeat
   setInterval(() => {
     wss.clients.forEach((client: any) => {
       if (client.isAlive === false) {
@@ -113,19 +113,19 @@ export const initWebSocket = (server: any) => {
 
 // 🔥 Broadcast
 const broadcast = (payload: any) => {
-  wss.clients.forEach((client: any) => {
+  wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(payload));
     }
   });
 };
 
-// ✅ Get active clients list
+// ✅ Active clients list
 export const getActiveClients = () => {
   return Array.from(activeClients.keys());
 };
 
-// ✅ Send message to specific device
+// ✅ Send to specific device
 export const sendToDevice = (deviceId: string, payload: any) => {
   const client = activeClients.get(deviceId);
 
@@ -134,7 +134,7 @@ export const sendToDevice = (deviceId: string, payload: any) => {
   }
 };
 
-// ✅ CRON JOB (unchanged)
+// ✅ CRON JOB
 cron.schedule('*/15 * * * *', async () => {
   console.log('⏱ Running 15-minute job...');
 
