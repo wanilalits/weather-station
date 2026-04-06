@@ -9,7 +9,7 @@ type SensorData = {
 };
 
 // ✅ Store latest data per device
-type DeviceMap2 = {
+type DeviceMap = {
   [deviceId: string]: SensorData;
 };
 
@@ -17,7 +17,7 @@ export const useWebSocket = (url: string) => {
   const ws = useRef<WebSocket | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
-  const [devices, setDevices] = useState<any>([]);
+  const [devices, setDevices] = useState<DeviceMap>({});
 
   // 🔥 Generate userId
   const generateUserId = () => {
@@ -53,14 +53,24 @@ export const useWebSocket = (url: string) => {
         const data: SensorData[] = JSON.parse(event.data);
 console.log (data)
         // ✅ Convert array → device map (keep latest per device)
-      /*  setDevices((prev) => {
-          const updated = { ...prev };
-          data.forEach((item) => {
-            updated[item.deviceId] = item;
-          });
+       
+setDevices((prev) => {
+  const updated = { ...prev };
 
-          return updated;
-        });  */
+  if (Array.isArray(data)) {
+    data.forEach((item: SensorData) => {
+      if (!item?.deviceId) return;
+
+      // skip frontend users
+      if (item.deviceId.toLowerCase().startsWith("frontend")) return;
+
+      updated[item.deviceId] = item;
+    });
+  }
+
+  return updated;
+});
+
       } catch (err) {
         console.error("❌ Error parsing WS data:", err);
       }

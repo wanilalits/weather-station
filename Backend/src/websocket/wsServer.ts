@@ -45,6 +45,7 @@ export const initWebSocket = (server: Server) => {
 
       try {
         const data = JSON.parse(message.toString());
+
 console.log(data[0].deviceId) ;
 
         // ✅ register device
@@ -61,7 +62,7 @@ console.log(data[0].deviceId) ;
           }
       
       // ✅ store data
-        const { deviceId } = data;
+        const { deviceId } = data[0];
 
        
         // 🔍 find existing device
@@ -73,26 +74,26 @@ console.log(data[0].deviceId) ;
           // ✅ UPDATE existing
           latestData[index] = {
             ...latestData[index],
-            ...data,
+            ...data[0],
             time: new Date(),
           };
         } else {
           // ✅ ADD new
           latestData.push({
-            ...data,
+            ...data[0],
             time: new Date(),
           });
         }
         console.log('📊 Latest data:', latestData);
-        console.log(latestData.length)
-        console.log(Object.keys(latestData))
+        //console.log(latestData.length)
+        //console.log(Object.keys(latestData))
 
         // ✅ safe condition
-        if (typeof data.humidity === 'number' && data.humidity > 70) {
+        if (typeof data[0].humidity === 'number' && data[0].humidity > 70) {
           broadcast({
             type: 'alert',
             message: 'High humidity!',
-            value: data.humidity,
+            value: data[0] .humidity,
           });
         }
 
@@ -161,14 +162,16 @@ export const sendToDevice = (deviceId: string, payload: any) => {
 };
 
 // ✅ CRON JOB
-cron.schedule('*/15 * * * *', async () => {
-  console.log('⏱ Running 1-min job...');
+//cron.schedule('*/* * * * *', async () => {
+  cron.schedule('*/10 * * * * *', async () => {
+console.log('⏱ Running 1-min job...');
 
   if (latestData.length === 0) {
     console.log('No data to save');
     return;
   }
   const batch = [...latestData]
+  console.log (batch)
   latestData.length = 0; // clear buffer
 
   try {
