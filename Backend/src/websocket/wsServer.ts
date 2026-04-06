@@ -7,7 +7,7 @@ let wss: WebSocketServer;
 
 // Buffer
 const dataBuffer: any[] = [];
-
+var latestData: Array<Record<string, any>> = [];
 // ✅ Store active clients
 const activeClients = new Map<string, WebSocket>();
 
@@ -41,32 +41,51 @@ export const initWebSocket = (server: Server) => {
 
     // ✅ receive data
     ws.on('message', (message: any) => {
+
       try {
         const data = JSON.parse(message.toString());
 
-        console.log('📩 Data received:', data);
-
-        const { deviceId, humidity } = data;
 
         // ✅ register device
-        if (deviceId) {
-          ws.deviceId = deviceId;
-          activeClients.set(deviceId, ws);
+        if (data.deviceId && !activeClients.has(data.deviceId)) {
+          ws.deviceId = data.deviceId;
+          activeClients.set(data.deviceId, ws);
         }
 
-        // ✅ store buffer
-        dataBuffer.push({
-          deviceId,
-          humidity,
-          time: new Date(),
-        });
+        // ✅ store data
+        const { deviceId } = data;
+
+        if (!deviceId) return; // safety
+
+        // 🔍 find existing device
+        const index = latestData.findIndex(
+          (item) => item.deviceId === deviceId
+        );
+
+        if (index !== -1) {
+          // ✅ UPDATE existing
+          latestData[index] = {
+            ...latestData[index],
+            ...data,
+            time: new Date(),
+          };
+        } else {
+          // ✅ ADD new
+          latestData.push({
+            ...data,
+            time: new Date(),
+          });
+        }
+        console.log('📊 Latest data:', latestData);
+        console.log(latestData.length)
+        console.log(Object.keys(latestData))
 
         // ✅ safe condition
-        if (typeof humidity === 'number' && humidity > 70) {
+        if (typeof data.humidity === 'number' && data.humidity > 70) {
           broadcast({
             type: 'alert',
             message: 'High humidity!',
-            value: humidity,
+            value: data.humidity,
           });
         }
 
@@ -135,16 +154,16 @@ export const sendToDevice = (deviceId: string, payload: any) => {
 };
 
 // ✅ CRON JOB
-cron.schedule('*/15 * * * *', async () => {
-  console.log('⏱ Running 15-minute job...');
+cron.schedule('*/1 * * * *', async () => {
+  console.log('⏱ Running 1-min job...');
 
-  if (dataBuffer.length === 0) {
+  if (latestData.length === 0) {
     console.log('No data to save');
     return;
   }
+  const batch = [...latestData]
 
-  const batch = [...dataBuffer];
-  dataBuffer.length = 0;
+  latestData.length = 0; // clear buffer
 
   try {
     await Sensor.insertMany(batch);
