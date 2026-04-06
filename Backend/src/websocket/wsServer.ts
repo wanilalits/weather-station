@@ -162,8 +162,8 @@ export const sendToDevice = (deviceId: string, payload: any) => {
 };
 
 // ✅ CRON JOB
-//cron.schedule('*/* * * * *', async () => {
-  cron.schedule('*/10 * * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
+  //cron.schedule('*/10 * * * * *', async () => {
 console.log('⏱ Running 1-min job...');
 
   if (latestData.length === 0) {
