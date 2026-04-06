@@ -4,7 +4,7 @@ const schema = new mongoose.Schema({
   deviceId: String,
   humidity: Number,
  tempAHT : Number,
- tempBM:Number,
+ tempBMP:Number,
     mx:Number,
     my:Number,
     mz:Number,
