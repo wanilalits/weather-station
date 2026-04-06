@@ -154,7 +154,7 @@ export const sendToDevice = (deviceId: string, payload: any) => {
 };
 
 // ✅ CRON JOB
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
   console.log('⏱ Running 1-min job...');
 
   if (latestData.length === 0) {
@@ -162,7 +162,6 @@ cron.schedule('*/1 * * * *', async () => {
     return;
   }
   const batch = [...latestData]
-
   latestData.length = 0; // clear buffer
 
   try {
