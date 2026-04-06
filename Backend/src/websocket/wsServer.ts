@@ -28,10 +28,11 @@ export const initWebSocket = (server: Server) => {
 
     // ✅ welcome
     ws.send(
-      JSON.stringify({
+      JSON.stringify([ 
+       {
         type: 'welcome',
         message: 'Connected to server',
-      })
+      }])
     );
 
     // ✅ heartbeat pong
@@ -44,19 +45,25 @@ export const initWebSocket = (server: Server) => {
 
       try {
         const data = JSON.parse(message.toString());
-
+console.log(data[0].deviceId) ;
 
         // ✅ register device
         if (data.deviceId && !activeClients.has(data.deviceId)) {
           ws.deviceId = data.deviceId;
           activeClients.set(data.deviceId, ws);
         }
-
-        // ✅ store data
+       if (!data[0].deviceId) return; // safety
+     
+       if (data[0].deviceId.startsWith("frontend")) 
+        
+          { // ignore user messages from frontend
+            console.log('👤 Frontend message, ignoring:', data);
+          }
+      
+      // ✅ store data
         const { deviceId } = data;
 
-        if (!deviceId) return; // safety
-
+       
         // 🔍 find existing device
         const index = latestData.findIndex(
           (item) => item.deviceId === deviceId

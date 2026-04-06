@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import React from 'react';
 import Card from './components/Card';
+import WebSocketUI from './components/WebSocketUI' ;
 
 
 const App: React.FC = () => {
@@ -35,7 +36,7 @@ const App: React.FC = () => {
         </div>
 
      <Card></Card>
-
+<WebSocketUI></WebSocketUI>
 
         {/* Content */}
         <div className="grid grid-cols-3 gap-4">
