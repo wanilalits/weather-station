@@ -1,11 +1,16 @@
-import React from 'react'
+//import React from 'react'
 import AreaChart from './AreaChart';;
 import { useState } from 'react';
-import humidityIcon from '../assets/Images/humidity.svg';
+//import humidityIcon from '../assets/Images/humidity.svg';
 import temperatureIcon from '../assets/Images/temperature.svg';
+ //import { useWebSocket } from "../hooks/useWebSocket"; 
+
+
+
 
 export default function Card() {
-   const [sensorValue, setSensorValue] = useState<{
+   
+  const [sensorValue, setSensorValue] = useState<{
       [key: string]: number;
     }>({
       Temperature: 10,

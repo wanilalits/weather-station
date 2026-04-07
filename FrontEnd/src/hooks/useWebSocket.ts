@@ -17,18 +17,18 @@ type DeviceMap = {
   [deviceId: string]: SensorData;
 };
 
-export const useWebSocket = (url: string) => {
+export const useWebSocket = (url: string , selectedDevice?:string|undefined|null) => {
   const ws = useRef<WebSocket | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
   const [devices, setDevices] = useState<DeviceMap>({});
 
   // 🔥 Generate userId
-  const generateUserId = () => {
+/*   const generateUserId = () => {
     const ip = window.location.hostname;
     const port = window.location.port || "80";
     return `Frontend_${ip}_${port}`;
-  };
+  }; */
 
 
 
@@ -43,7 +43,6 @@ export const useWebSocket = (url: string) => {
     ws.current.onopen = () => {
       console.log("✅ WS Connected");
       setIsConnected(true);
-
       // Send userId to server
       ws.current?.send(
         JSON.stringify([{
@@ -51,6 +50,7 @@ export const useWebSocket = (url: string) => {
         }])
       );  
     };
+
 
   ws.current.onmessage = (event) => {
       try {
