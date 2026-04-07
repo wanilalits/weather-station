@@ -41,7 +41,7 @@ export default function Card() {
       }
     };
   
-    const myConvertion = (title: string, value: number) => {
+    const myConvertion = (title: string) => {
       if (title === 'Temperature') {
         return (Number(sensorValue.Temperature) * 9) / 5 + 32;
       } else {
@@ -131,7 +131,7 @@ export default function Card() {
                 <div className="flex items-center justify-between">
                   <h2 className="text-3xl font-semibold ">
                     {' '}
-                    {convertedValues[card.title] ? <> {myConvertion(card.title, card.value)} </> : <>{formatNumber(card.value)}</>}
+                    {convertedValues[card.title] ? <> {myConvertion(card.title)} </> : <>{formatNumber(card.value)}</>}
                   </h2>
                   <AreaChart />
                 </div>
