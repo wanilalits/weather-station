@@ -119,8 +119,7 @@ setDevices((prev) => {
   return {
     isConnected,
     devices,   // 🔥 latest device data
-    sendMessage,
-    
+
   };
 };
 
