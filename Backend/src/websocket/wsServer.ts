@@ -95,8 +95,8 @@ console.log('📡 broadcasting to frontend only');
 
 
   // ✅ CRON JOB
-  //cron.schedule('*/15 * * * *', async () => {
-    cron.schedule('*/10 * * * * *', async () => {
+  cron.schedule('*/15 * * * *', async () => {
+    //cron.schedule('*/10 * * * * *', async () => {
     console.log('⏱ Running 1-min job...');
   
     if (latestData.length === 0) {

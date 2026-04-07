@@ -5,7 +5,11 @@ import { useEffect, useRef, useState } from "react";
 type SensorData = {
   deviceId: string;
   tempAHT: string;
+  tempBM : string;
   humidity: string;
+  mx:string;
+  my:string;
+  mz:string;
 };
 
 // ✅ Store latest data per device

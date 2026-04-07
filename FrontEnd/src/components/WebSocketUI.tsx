@@ -1,7 +1,7 @@
 import { useWebSocket } from "../hooks/useWebSocket";
 
 export default function WebSocketUI() {
-  const { isConnected, devices, sendMessage } = useWebSocket("ws://localhost:5000");
+  const { isConnected, devices, sendMessage } = useWebSocket("wss://weather-station-ch7x.onrender.com/");
 console.log("Devices in UI:", devices);
   return (
     <div>
