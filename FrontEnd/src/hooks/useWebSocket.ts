@@ -17,7 +17,7 @@ type DeviceMap = {
   [deviceId: string]: SensorData;
 };
 
-export const useWebSocket = (url: string , selectedDevice?:string|undefined|null) => {
+export const useWebSocket = (url: string ) => {
   const ws = useRef<WebSocket | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
@@ -108,13 +108,13 @@ setDevices((prev) => {
   }, [url]);
 
   // 📤 Send message to server
-  const sendMessage = (message: any) => {
+  //const sendMessage = (message: any) => {
    /*  if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(message));
     } else {
       console.warn("⚠️ WS not connected");
     } */
-  };
+ // };
 
   return {
     isConnected,

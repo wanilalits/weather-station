@@ -10,7 +10,7 @@ import temperatureIcon from '../assets/Images/temperature.svg';
 
 export default function Card() {
    
-  const [sensorValue, setSensorValue] = useState<{
+  const [sensorValue] = useState<{
       [key: string]: number;
     }>({
       Temperature: 10,
@@ -22,7 +22,7 @@ export default function Card() {
     const [convertedValues, setConvertedValues] = useState<{
       [key: string]: any;
     }>({});
-    const [id, setID] = useState<number | null>(null);
+    //const [id, setID] = useState<number | null>(null);
   
     const unitFormat = (id: number, parameter: string) => {
       if (id === 0) {
@@ -92,7 +92,7 @@ export default function Card() {
             },
             
           ].map((card, i) => {
-            const Icon = card.Icon;
+           // const Icon = card.Icon;
             return (
               <div key={i} className="bg-white p-2 rounded-xl shadow h-24 ">
                 {/*Card Title*/} {/* UNITS CONTAINER */}
