@@ -4,180 +4,114 @@ import Sensor from '../modules/sensor/sensor.model';
 import { Server } from 'http';
 
 let wss: WebSocketServer;
-
-// Buffer
-const dataBuffer: any[] = [];
-var latestData: Array<Record<string, any>> = [];
-// ✅ Store active clients
-const activeClients = new Map<string, WebSocket>();
-
+var latestData: Array<Record<string, any>> = []; // Buffer
 // ✅ INIT (attach to HTTP server)
+
+
+
+
 export const initWebSocket = (server: Server) => {
   wss = new WebSocketServer({ server });
-
   console.log('✅ WebSocket server started');
 
   wss.on('connection', (ws: any, req) => {
     const ip = req.socket.remoteAddress;
     const port = req.socket.remotePort;
-
     console.log(`✅ Client connected: ${ip}:${port}`);
 
+    // ✅ initialize
     ws.isAlive = true;
     ws.deviceId = null;
 
-    // ✅ welcome
-    ws.send(
-      JSON.stringify([ 
-       {
-        type: 'welcome',
-        message: 'Connected to server',
-      }])
-    );
-
-    // ✅ heartbeat pong
+  // ✅ HEARTBEAT (pong)
     ws.on('pong', () => {
       ws.isAlive = true;
-    });
+    })
 
-    // ✅ receive data
-    ws.on('message', (message: any) => {
+    // ✅ Send welcome message when client connected
+    onconnection(ws, req);
+   
+// ✅ HANDLE MESSAGES
+    onmessage(ws);
 
-      try {
-        const data = JSON.parse(message.toString());
-
-console.log(data[0].deviceId) ;
-
-        // ✅ register device
-        if (data.deviceId && !activeClients.has(data.deviceId)) {
-          ws.deviceId = data.deviceId;
-          activeClients.set(data.deviceId, ws);
-        }
-       if (!data[0].deviceId) return; // safety
-     
-       if (data[0].deviceId.startsWith("frontend")) 
-        
-          { // ignore user messages from frontend
-            console.log('👤 Frontend message, ignoring:', data);
-          }
-      
-      // ✅ store data
-        const { deviceId } = data[0];
-
-       
-        // 🔍 find existing device
-        const index = latestData.findIndex(
-          (item) => item.deviceId === deviceId
-        );
-
-        if (index !== -1) {
-          // ✅ UPDATE existing
-          latestData[index] = {
-            ...latestData[index],
-            ...data[0],
-            time: new Date(),
-          };
-        } else {
-          // ✅ ADD new
-          latestData.push({
-            ...data[0],
-            time: new Date(),
-          });
-        }
-        console.log('📊 Latest data:', latestData);
-        //console.log(latestData.length)
-        //console.log(Object.keys(latestData))
-
-        // ✅ safe condition
-        if (typeof data[0].humidity === 'number' && data[0].humidity > 70) {
-          broadcast({
-            type: 'alert',
-            message: 'High humidity!',
-            value: data[0] .humidity,
-          });
-        }
-
-        // ✅ ack
-        ws.send(
-          JSON.stringify({
-            type: 'ack',
-            status: 'received',
-          })
-        );
-      } catch (err) {
-        console.log('❌ Invalid JSON');
-      }
-    });
-
-    // ✅ disconnect
+    // ✅ HANDLE CLOSE (cleanup)
     ws.on('close', () => {
-      console.log('❌ Client disconnected');
+      console.log(`❌ Disconnected: ${ws.deviceId}`);
 
       if (ws.deviceId) {
-        activeClients.delete(ws.deviceId);
+        console.log(`❌ Disconnected: ${ws.deviceId}`);
       }
     });
   });
 
-  // 🔥 Heartbeat
+  // ✅ GLOBAL HEARTBEAT CHECK (every 1 min)
   setInterval(() => {
-    wss.clients.forEach((client: any) => {
-      if (client.isAlive === false) {
-        console.log('❌ Terminating dead client');
-
-        if (client.deviceId) {
-          activeClients.delete(client.deviceId);
-        }
-
-        return client.terminate();
+    console.log('🔍 Checking clients...');
+    wss.clients.forEach((ws: any) => {
+      if (!ws.isAlive) {
+        console.log(`❌ Terminating: ${ws.deviceId}`);
+        return ws.terminate();
       }
-
-      client.isAlive = false;
-      client.ping();
+      ws.isAlive = false;
+      ws.ping();
     });
-  }, 30000);
+  }, 60000);
 };
 
-// 🔥 Broadcast
-const broadcast = (payload: any) => {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(payload));
+  const onconnection = (ws: any, req: any) => {
+    const ip = req.socket.remoteAddress;
+    const port = req.socket.remotePort;
+    console.log(`✅ Client connected: ${ip}:${port}`);
+    ws.send(JSON.stringify([{ deviceId: ws.deviceId, type: 'welcome' }]));
+  };
+
+
+
+  const onmessage = (ws: any) => {
+    ws.on('message', (req: any) => {
+      try {
+        const data = JSON.parse(req.toString());
+      // ✅ assign deviceId once
+        if (ws.deviceId == null && data[0].deviceId) {
+        console.log('deviceId allowed');
+        ws.deviceId = data[0].deviceId;
+      }
+
+      if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {
+        
+latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)
+console.log('📡 broadcasting to frontend only');
+        wss.clients.forEach((client: any) => {
+            if (client.deviceId && client.deviceId.startsWith('frontend') && client.readyState === 1) {
+            client.send(JSON.stringify(data));
+          }
+        });
+      }
+       } catch (err) {
+      console.log('❌ Invalid JSON');
+    }
+    });
+  };
+
+
+  // ✅ CRON JOB
+  //cron.schedule('*/15 * * * *', async () => {
+    cron.schedule('*/10 * * * * *', async () => {
+    console.log('⏱ Running 1-min job...');
+  
+    if (latestData.length === 0) {
+      console.log('No data to save');
+      return;
+    }
+    const batch = [...latestData]
+    console.log(batch)
+    latestData.length = 0; // clear buffer
+  
+    try {
+      await Sensor.insertMany(batch);
+      console.log(`✅ Saved ${batch.length} records to DB`);
+    } catch (error: any) {
+      console.error('❌ Error saving data:', error.message);
     }
   });
-};
-
-// ✅ Active clients list
-export const getActiveClients = () => {
-  return Array.from(activeClients.keys());
-};
-
-// ✅ Send to specific device
-export const sendToDevice = (deviceId: string, payload: any) => {
-  const client = activeClients.get(deviceId);
-
-  if (client && client.readyState === WebSocket.OPEN) {
-    client.send(JSON.stringify(payload));
-  }
-};
-
-// ✅ CRON JOB
-cron.schedule('*/15 * * * *', async () => {
-  //cron.schedule('*/10 * * * * *', async () => {
-console.log('⏱ Running 1-min job...');
-
-  if (latestData.length === 0) {
-    console.log('No data to save');
-    return;
-  }
-  const batch = [...latestData]
-  console.log (batch)
-  latestData.length = 0; // clear buffer
-
-  try {
-    await Sensor.insertMany(batch);
-    console.log(`✅ Saved ${batch.length} records to DB`);
-  } catch (error: any) {
-    console.error('❌ Error saving data:', error.message);
-  }
-});
+  
