@@ -7,7 +7,7 @@ export const startTelegramCron = () => {
     //console.log(latestData); 
 if (latestData.length > 0) {
  console.log(latestData)
-  //await sendTelegramMessage(`Latest Sensor Data: ${JSON.stringify(latestData)}`);
+  await sendTelegramMessage(`Latest Sensor Data: ${JSON.stringify(latestData)}`);
 } else {
   console.log("latestData")
 }                  
