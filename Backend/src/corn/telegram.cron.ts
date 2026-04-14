@@ -19,18 +19,16 @@ const formatData = (data: any[]) => {
 };
 
 
-
-
 export const startTelegramCron = () => {
  cron.schedule("*/15 * * * *", async () => {
-  //cron.schedule("*/2 * * * * *", async () => {
+  //cron.schedule("*/10 * * * * *", async () => {
    
 if (exportData.length > 0) {
  console.log(exportData)
 await sendTelegramMessage(`📊 Latest Sensor Data:\n${formatData(exportData)}`);
  console.log(exportData)
 } else {
-  //console.log("exportData")
+  await sendTelegramMessage(`no data to send`);
 }
   exportData.length = 0; // ✅ clears the array                  
   });
