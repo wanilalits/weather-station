@@ -4,7 +4,8 @@ import Sensor from '../modules/sensor/sensor.model';
 import { Server } from 'http';
 
 let wss: WebSocketServer;
-export var latestData: Array<Record<string, any>> = []; // Buffer
+var latestData: Array<Record<string, any>> = []; // Buffer
+export var exportData: Array<Record<string, any>> = []; // Buffer
 // ✅ INIT (attach to HTTP server)
 
 
@@ -73,17 +74,21 @@ export const initWebSocket = (server: Server) => {
         if (ws.deviceId == null && data[0].deviceId) {
         console.log('deviceId allowed');
         ws.deviceId = data[0].deviceId;
+        exportData=data;
       }
 
-      if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {
-        
-latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)
+      if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {   
+latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)     
 console.log('📡 broadcasting to frontend only');
         wss.clients.forEach((client: any) => {
             if (client.deviceId && client.deviceId.startsWith('frontend') && client.readyState === 1) {
             client.send(JSON.stringify(data));
           }
         });
+      }
+      else
+      {
+
       }
        } catch (err) {
       console.log('❌ Invalid JSON');
@@ -113,13 +118,3 @@ console.log('📡 broadcasting to frontend only');
     }
   });
 
-  //https://api.telegram.org/bot8783532358:AAF8SmURZK2XCsNAJOjCziaH4p3vRcUxw80/getUpdates
-// chat ID 8162882861
-   //You will find it at t.me/lalit_wani_bot.
-   // You can now add a description, about section and profile picture for your bot, see /help for a list of commands. By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it. Just make sure the bot is fully operational before you do this.
-
-//Use this token to access the HTTP API:
-//8783532358:AAF8SmURZK2XCsNAJOjCziaH4p3vRcUxw80
-//Keep your token secure and store it safely, it can be used by anyone to control your bot.
-
-//For a description of the Bot API, see this page: https://core.telegram.org/bots/api

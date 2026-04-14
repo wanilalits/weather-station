@@ -1,13 +1,13 @@
 import cron from "node-cron";
 import { sendTelegramMessage } from "../modules/telegram/telegram.service";
-import {latestData} from  "../websocket/wsServer"
+import {exportData} from  "../websocket/wsServer"
 export const startTelegramCron = () => {
- cron.schedule("*/15 * * * *", async () => {
+ cron.schedule("*/5 * * * *", async () => {
   //cron.schedule("*/1 * * * * *", async () => {
     //console.log(latestData); 
-if (latestData.length > 0) {
- console.log(latestData)
-  await sendTelegramMessage(`Latest Sensor Data: ${JSON.stringify(latestData)}`);
+if (exportData.length > 0) {
+ console.log(exportData)
+  await sendTelegramMessage(`Latest Sensor Data: ${JSON.stringify(exportData)}`);
 } else {
   console.log("latestData")
 }                  
