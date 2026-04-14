@@ -1,11 +1,19 @@
 import express from "express";
 import { connectDB } from "./config/db";
 import dotenv from "dotenv";
+dotenv.config();
 import sensorRoutes from "./modules/sensor/sensor.routes";
 import { initWebSocket } from "./websocket/wsServer";
 import http from "http";
 
-dotenv.config();
+import { startTelegramCron } from "./corn/telegram.cron";
+
+startTelegramCron();
+
+
+
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -1,127 +1,119 @@
-
 import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 
-// ✅ Type for incoming device data
-type SensorData = {
-  deviceId: string;
-  tempAHT: string;
-  tempBM : string;
-  humidity: string;
-  mx:string;
-  my:string;
-  mz:string;
-};
+export const useWebSocket = () => {
+  const dispatch = useDispatch();
 
-// ✅ Store latest data per device
-type DeviceMap = {
-  [deviceId: string]: SensorData;
-};
-
-export const useWebSocket = (url: string ) => {
-  const ws = useRef<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeout = useRef<any>(null);
 
   const [isConnected, setIsConnected] = useState(false);
-  const [devices, setDevices] = useState<DeviceMap>({});
 
-  // 🔥 Generate userId
-/*   const generateUserId = () => {
-    const ip = window.location.hostname;
-    const port = window.location.port || "80";
-    return `Frontend_${ip}_${port}`;
-  }; */
+  const WS_URL = "wss://weather-station-ch7x.onrender.com/";
 
-
-
-  // 🔁 Reconnect logic
-  const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+  // 🔌 Connect function
   const connect = () => {
-    //const deviceId = generateUserId();
-    const deviceId = "frontend";
-    ws.current = new WebSocket(url);
+    console.log("🔌 [WS] Trying to connect...");
 
-    ws.current.onopen = () => {
-      console.log("✅ WS Connected");
+    const ws = new WebSocket(WS_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log("✅ [WS] Connected");
       setIsConnected(true);
-      // Send userId to server
-      ws.current?.send(
-        JSON.stringify([{
-          deviceId,
-        }])
-      );  
+sendinitialMessage();
     };
 
+    ws.onmessage = (event) => {
+      //console.log("📩 [WS] Raw message:", event.data);
 
-  ws.current.onmessage = (event) => {
       try {
-        const data: SensorData[] = JSON.parse(event.data);
-console.log (data)
-        // ✅ Convert array → device map (keep latest per device)
-       
-setDevices((prev) => {
-  const updated = { ...prev };
+        const data = JSON.parse(event.data);
 
-  if (Array.isArray(data)) {
-    data.forEach((item: SensorData) => {
-      if (!item?.deviceId) return;
+        //console.log("📦 [WS] Parsed data:", data);
 
-      // skip frontend users
-      if (item.deviceId.toLowerCase().startsWith("frontend")) return;
+        dispatch({
+          type: "SOCKET_DATA",
+          payload: data,
+        });
 
-      updated[item.deviceId] = item;
-    });
-  }
-
-  return updated;
-});
-
+        //console.log("📤 [WS] Dispatched SOCKET_DATA");
       } catch (err) {
-        console.error("❌ Error parsing WS data:", err);
+        //console.error("❌ [WS] JSON Parse Error:", err);
       }
-    }; 
-
-    ws.current.onerror = (err) => {
-      console.error("❌ WS Error:", err);
     };
 
-    ws.current.onclose = () => {
-      console.log("🔌 WS Disconnected");
+    ws.onerror = (err) => {
+      //console.error("❌ [WS] Error:", err);
+    };
+
+    ws.onclose = () => {
+     // console.log("🔴 [WS] Disconnected");
       setIsConnected(false);
 
-      // 🔁 Auto reconnect after 3 sec
-      reconnectTimeout.current = setTimeout(() => {
-        console.log("🔁 Reconnecting...");
-        connect();
-      }, 3000);
+      // 🔁 Reconnect after delay
+      reconnect();
     };
   };
 
+  // 🔁 Reconnect logic
+  const reconnect = () => {
+    //console.log("⏳ [WS] Reconnecting in 3 sec...");
+
+    reconnectTimeout.current = setTimeout(() => {
+      connect();
+    }, 3000);
+  };
+
+  // ❌ Disconnect manually
+  const disconnect = () => {
+    //console.log("🛑 [WS] Manual disconnect");
+
+    if (reconnectTimeout.current) {
+      clearTimeout(reconnectTimeout.current);
+    }
+
+    wsRef.current?.close();
+  };
+
+
+ // ▶️ Send initial message
+  const sendinitialMessage = () => {
+    if (wsRef.current && wsRef.current.readyState === 1) {
+     const msg=[{"deviceId":"frontend"}]
+      wsRef.current.send(JSON.stringify(msg));
+    //  console.log("📤 [WS] Sent:", msg);
+    } else {
+     // console.warn("⚠️ [WS] Not connected");
+    }
+  };
+
+  // ▶️ Send message
+  const sendMessage = (msg: any) => {
+    if (wsRef.current && wsRef.current.readyState === 1) {
+      wsRef.current.send(JSON.stringify(msg));
+     // console.log("📤 [WS] Sent:", msg);
+    } else {
+     // console.warn("⚠️ [WS] Not connected");
+    }
+  };
+
+
+
+
+  // 🚀 Auto connect on mount
   useEffect(() => {
     connect();
 
-   return () => {
-      ws.current?.close();
-      if (reconnectTimeout.current) {
-        clearTimeout(reconnectTimeout.current);
-      }
-    }; 
-  }, [url]);
-
-  // 📤 Send message to server
-  //const sendMessage = (message: any) => {
-   /*  if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify(message));
-    } else {
-      console.warn("⚠️ WS not connected");
-    } */
- // };
+    return () => {
+      disconnect();
+    };
+  }, []);
 
   return {
     isConnected,
-    devices,   // 🔥 latest device data
-
+    sendMessage,
+    connect,     // 👉 manual connect
+    disconnect,  // 👉 manual disconnect
   };
 };
-
-
- // const { isConnected, devices } = useWebSocket("ws://localhost:5000");

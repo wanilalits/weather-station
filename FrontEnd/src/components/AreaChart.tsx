@@ -16,8 +16,11 @@ const data = [
 
 export default function MiniAreaChart() {
   return (
-    <div className="  w-[70%] h-10 mt-5">
-       <ResponsiveContainer width="100%" height="100%">
+   <div
+  className="w-[100px]  mt-5 "
+
+>
+    <ResponsiveContainer   width="100%" aspect={3}  minHeight={undefined}>
           <AreaChart data={data}>
             
             {/* Gradient Definition */}

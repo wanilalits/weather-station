@@ -9,9 +9,7 @@ export const createLog= async (req: Request, res: Response) => {
     const { deviceId, humidity } = req.body;
 
     if (!deviceId || humidity === undefined) {
-      return res.status(400).json({
-        error: "deviceId and humidity required",
-      });
+      return res.status(400).json({ error: "deviceId and humidity required", });
     }
     const data = await Sensor.create({ deviceId, humidity });
     const total = await Sensor.countDocuments();
@@ -25,9 +23,7 @@ const stats = await Sensor.db.db.command({collStats: Sensor.collection.name,});
 
 const allstats = await Sensor.db.db!.stats();
 
-//const sizeInBytes = stats.size; // actual data size
-//const storageSize = stats.storageSize; // allocated size
-    
+
 res.json({ success: true,
    totalEntries: total,
  totalDocs: stats.count,
@@ -59,4 +55,8 @@ export const getLogs = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch data" });
   }
 };
+
+
+
+
 //http://localhost:5000/device_log?deviceId=test_21&limit=100

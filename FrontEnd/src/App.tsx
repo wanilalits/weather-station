@@ -1,12 +1,21 @@
-//import { useState } from 'react';
+import { useEffect } from 'react';
 import React from 'react';
-import Card from './components/Card';
-import WebSocketUI from './components/WebSocketUI' ;
-
+import Card from './components/Card';;
+import { useWebSocket } from "./hooks/useWebSocket";
+import DashboardHeader from './components/DashboardHeader';
+import  BarChartCard  from './components/BarChartCard';
 
 const App: React.FC = () => {
+  const { connect, disconnect } = useWebSocket(); // ✅ only once
 
 
+  useEffect(() => {
+    connect(); // ✅ run once on mount
+
+    return () => {
+      disconnect(); // cleanup
+    };
+  }, []);
 
  
 
@@ -30,13 +39,10 @@ const App: React.FC = () => {
       <main className="flex-1 p-6 overflow-auto">
         {/* Header */}
       
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Analytics Overview</h1>
-          <input placeholder="Search" className="px-4 py-2 rounded-lg border" />
-        </div>
-
+      
+<DashboardHeader></DashboardHeader>
      <Card></Card>
-<WebSocketUI></WebSocketUI>
+
 
         {/* Content */}
         <div className="grid grid-cols-3 gap-4">
@@ -46,15 +52,7 @@ const App: React.FC = () => {
 
             {/* Fake Chart */}
             <div className="h-64 flex items-end gap-2">
-              {[40, 70, 50, 90, 60, 100, 80].map((h, i) => (
-                <div
-                  key={i}
-                  className="bg-blue-400 w-full rounded"
-                  style={{
-                    height: `${h}%`,
-                  }}
-                ></div>
-              ))}
+                  <BarChartCard></BarChartCard>
             </div>
           </div>
 
