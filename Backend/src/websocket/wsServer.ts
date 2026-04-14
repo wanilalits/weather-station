@@ -74,9 +74,8 @@ export const initWebSocket = (server: Server) => {
         if (ws.deviceId == null && data[0].deviceId) {
         console.log('deviceId allowed');
         ws.deviceId = data[0].deviceId;
-        exportData=data;
       }
-
+exportData=data;
       if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {   
 latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)     
 console.log('📡 broadcasting to frontend only');
@@ -86,10 +85,7 @@ console.log('📡 broadcasting to frontend only');
           }
         });
       }
-      else
-      {
-
-      }
+      
        } catch (err) {
       console.log('❌ Invalid JSON');
     }
