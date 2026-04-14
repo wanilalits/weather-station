@@ -20,7 +20,7 @@ const formatData = (data: any[]) => {
 
 
 export const startTelegramCron = () => {
- cron.schedule("*/1 * * * *", async () => {
+ cron.schedule("*/15 * * * *", async () => {
   //cron.schedule("*/10 * * * * *", async () => {
    
 if (exportData.length > 0) {
