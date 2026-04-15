@@ -6,14 +6,9 @@ import sensorRoutes from "./modules/sensor/sensor.routes";
 import { initWebSocket } from "./websocket/wsServer";
 import http from "http";
 
-import { startTelegramCron } from "./corn/telegram.cron";
+import { common } from "./corn/common.corn";
 
-startTelegramCron();
-
-
-
-
-
+common();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -1,6 +1,6 @@
 // saga.ts
 
-import { takeEvery, takeLatest, put, call, delay, fork } from "redux-saga/effects";
+import { takeEvery, put, call, delay, fork } from "redux-saga/effects";
 import { updateDevice } from "../features/deviceSlice";
 
 // ==============================
@@ -42,7 +42,7 @@ function* hourlyApiCall(): any {
 
       // 👉 Example API call
       const res = yield call(fetch, "https://jsonplaceholder.typicode.com/posts");
-      const data = yield res.json();
+      //const data = yield res.json();
 
       // 👉 Marathi:
       // इथे API response store करू शकतो

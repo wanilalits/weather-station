@@ -1,15 +1,10 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import cron from 'node-cron';
-import Sensor from '../modules/sensor/sensor.model';
 import { Server } from 'http';
 
 let wss: WebSocketServer;
-var latestData: Array<Record<string, any>> = []; // Buffer
+export var latestData: Array<Record<string, any>> = []; // Buffer
 export var exportData: Array<Record<string, any>> = []; // Buffer
 // ✅ INIT (attach to HTTP server)
-
-
-
 
 export const initWebSocket = (server: Server) => {
   wss = new WebSocketServer({ server });
@@ -78,6 +73,7 @@ export const initWebSocket = (server: Server) => {
 exportData=data;
       if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {   
 latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)     
+
 console.log('📡 broadcasting to frontend only');
         wss.clients.forEach((client: any) => {
             if (client.deviceId && client.deviceId.startsWith('frontend') && client.readyState === 1) {
@@ -93,24 +89,5 @@ console.log('📡 broadcasting to frontend only');
   };
 
 
-  // ✅ CRON JOB
-  cron.schedule('*/15 * * * *', async () => {
-    //cron.schedule('*/10 * * * * *', async () => {
-    console.log('⏱ Running 1-min job...');
-  
-    if (latestData.length === 0) {
-      console.log('No data to save');
-      return;
-    }
-    const batch = [...latestData]
-    console.log(batch)
-    latestData.length = 0; // clear buffer
-  
-    try {
-      await Sensor.insertMany(batch);
-      console.log(`✅ Saved ${batch.length} records to DB`);
-    } catch (error: any) {
-      console.error('❌ Error saving data:', error.message);
-    }
-  });
+
 

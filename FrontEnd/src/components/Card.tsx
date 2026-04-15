@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import  { useEffect, useRef } from 'react';
 import AreaChart from './AreaChart';
 import { useState } from 'react';
 import temperatureIcon from '../assets/Images/temperature.svg';
 import humidityIcon from '../assets/Images/humidity.svg';
-import batteryIcon from '../assets/Images/battery.svg';
+//import batteryIcon from '../assets/Images/battery.svg';
 import airPressureIcon from '../assets/Images/airPressure.svg';
 import realFeeIcon from '../assets/Images/realFee.svg';
 import altitudeIcon from '../assets/Images/altitude.svg';
@@ -29,7 +29,7 @@ export default function Card() {
     [key: string]: string | undefined;
   };
 
-  const [data, setData] = useState<RootState>({ specificdevices: [] });
+  const [data] = useState<RootState>({ specificdevices: [] });
   const [selected, setSelected] = useState<string>('');
   const samplesRef = useRef<DeviceData[]>([]);
   const lastValueRef = useRef<string | null>(null);

@@ -44,7 +44,7 @@ sendinitialMessage();
     };
 
     ws.onerror = (err) => {
-      //console.error("❌ [WS] Error:", err);
+      console.error("❌ [WS] Error:", err);
     };
 
     ws.onclose = () => {
