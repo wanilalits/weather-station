@@ -15,20 +15,21 @@ const formatData = (data: any[]) => {
    • X: ${d.mx}
    • Y: ${d.my}
    • Z: ${d.mz}
+   local
 `).join("\n--------------------\n");
 };
 
 
 export const startTelegramCron = () => {
- cron.schedule("*/15 * * * *", async () => {
-  //cron.schedule("*/10 * * * * *", async () => {
+ cron.schedule("*/13 * * * *", async () => {
+  //cron.schedule("*/20 * * * * *", async () => {
    
 if (exportData.length > 0) {
  console.log(exportData)
 await sendTelegramMessage(`📊 Latest Sensor Data:\n${formatData(exportData)}`);
  console.log(exportData)
 } else {
-  await sendTelegramMessage(`no data to send`);
+  await sendTelegramMessage(`no data to send from local`);
 }
   exportData.length = 0; // ✅ clears the array                  
   });
