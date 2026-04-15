@@ -41,7 +41,7 @@ function* hourlyApiCall(): any {
     //  console.log("⏳ Calling API every 1 hour...");
 
       // 👉 Example API call
-      const res = yield call(fetch, "https://jsonplaceholder.typicode.com/posts");
+      //const res = yield call(fetch, "https://jsonplaceholder.typicode.com/posts");
       //const data = yield res.json();
 
       // 👉 Marathi:
