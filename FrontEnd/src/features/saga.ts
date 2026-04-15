@@ -1,6 +1,6 @@
 // saga.ts
 
-import { takeEvery, put, call, delay, fork } from "redux-saga/effects";
+import { takeEvery, put,  delay, fork } from "redux-saga/effects";
 import { updateDevice } from "../features/deviceSlice";
 
 // ==============================
