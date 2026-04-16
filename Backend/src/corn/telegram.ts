@@ -22,14 +22,14 @@ export const formatData = (exportData: any[]) => {
 
 export const TelegramMsg = async() => {
 if (exportData.length > 0) {
- console.log(exportData)
+  console.log("Done")
+  //console.log(exportData)
  sendTelegramMessage(`📊 Latest Sensor Data:\n${formatData(exportData)}`);
- console.log(exportData)
+ 
 } else {
    sendTelegramMessage(`no data to send`);
 }
-  exportData.length = 0; // ✅ clears the array  
-               
+  exportData.length = 0; // ✅ clears the array               
 };
 
 

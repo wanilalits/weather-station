@@ -71,9 +71,15 @@ export const initWebSocket = (server: Server) => {
         ws.deviceId = data[0].deviceId;
       }
 exportData=data;
-      if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) {   
-latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)     
+      if (data[0].deviceId && !data[0].deviceId.startsWith('frontend') && !ws.deviceId.startsWith('frontend')) { 
 
+  latestData.length = 0;
+  latestData.push(...data);
+
+  //exportData.length = 0;
+  //.push(...data);  
+  console.log(exportData)
+//latestData = data; // overwrite buffer with latest (problem is that miltiple input devices will overwrite each other, solution is to store array of latest data for each device and update based on deviceId)     
 console.log('📡 broadcasting to frontend only');
         wss.clients.forEach((client: any) => {
             if (client.deviceId && client.deviceId.startsWith('frontend') && client.readyState === 1) {
