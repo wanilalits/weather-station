@@ -15,7 +15,9 @@ export const formatData = (exportData: any[]) => {
    • X: ${d.mx}
    • Y: ${d.my}
    • Z: ${d.mz}
-  • angle: ${d.angle}°
+   
+🧭 Orientation:
+   • angle: ${d.angle}°
 `).join("\n--------------------\n");
 };
 
