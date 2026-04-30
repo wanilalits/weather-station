@@ -28,8 +28,8 @@ export default function Card() {
     [key: string]: string | undefined;
   };
 
-  const [data] = useState<RootState>({ specificdevices: [] });
-  const [selected, setSelected] = useState<string>('');
+  //const [data] = useState<RootState>({ specificdevices: [] });
+  //const [selected, setSelected] = useState<string>('');
   const samplesRef = useRef<DeviceData[]>([]);
   const lastValueRef = useRef<string | null>(null);
   const devices = useSelector((state: any) => state.device.devices);
