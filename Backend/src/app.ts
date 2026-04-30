@@ -3,6 +3,7 @@ import { connectDB } from "./config/db";
 import dotenv from "dotenv";
 dotenv.config();
 import sensorRoutes from "./modules/sensor/sensor.routes";
+import userRoutes from "./modules/user/user.routes";
 import { initWebSocket } from "./websocket/wsServer";
 import http from "http";
 
@@ -22,6 +23,8 @@ initWebSocket(server);
 // Middleware
 app.use(express.json());
 app.use("/", sensorRoutes);
+app.use("/", userRoutes);
+
 
 app.get("/", (req, res) => {
   res.json({

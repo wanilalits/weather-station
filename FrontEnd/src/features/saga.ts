@@ -1,7 +1,7 @@
 // saga.ts
 
 import { takeEvery, put,  delay, fork } from "redux-saga/effects";
-import { updateDevice } from "../features/deviceSlice";
+import { updateDevice, updateDevicesamples } from "../features/deviceSlice";
 
 // ==============================
 // 🟢 1. WebSocket Data Handling
@@ -16,6 +16,8 @@ function* handleSocketData(action: any): any {
   //👉 इथे आपण WebSocket कडून आलेला data process करू शकतो validation, transformation, filtering वगैरे करू शकतो
     // 👉 Store in Redux
     yield put(updateDevice(data));
+    yield put(updateDevicesamples(data));
+    
     //console.log("✅ [SAGA] Data sent to reducer");
   } catch (error) {
    // console.error("Socket Error:", error);

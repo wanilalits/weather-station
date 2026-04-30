@@ -41,8 +41,14 @@ res.json({ success: true,
 export const getLogs = async (req: Request, res: Response) => {
   try {
     const { deviceId, limit } = req.query;
+const total = await Sensor.countDocuments();
 
-    const logs = await Sensor.find({ deviceId })
+  if (!Sensor.db?.db) {
+  return res.status(500).json({ error: "Database not connected" });
+}
+ const stats = await Sensor.db.db.command({collStats: Sensor.collection.name,});
+const allstats = await Sensor.db.db!.stats();
+const logs = await Sensor.find({ deviceId })
       .sort({ time: -1 })
       .limit(Number(limit) || 10);
 
@@ -50,6 +56,12 @@ export const getLogs = async (req: Request, res: Response) => {
       success: true,
       count: logs.length,
       data: logs,
+         totalEntries: total,
+ totalDocs: stats.count,
+  avgDocSize: stats.avgObjSize,
+  sizeKB: (stats.size / 1024).toFixed(2),
+  storageMB: (stats.storageSize / (1024 * 1024)).toFixed(2),
+   dbSizeMB: (allstats.dataSize / (1024 * 1024)).toFixed(4),
     });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch data" });

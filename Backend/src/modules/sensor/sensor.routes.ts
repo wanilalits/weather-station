@@ -7,8 +7,3 @@ router.post("/device_log", createLog);
 router.get("/device_log", getLogs);
 
 export default router;
-
-
-
-
-router.post("/device_log", createLog);

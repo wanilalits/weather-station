@@ -1,27 +1,44 @@
-import {
-     AreaChart,
-  Area,
-  ResponsiveContainer,
-} from "recharts";
+import {AreaChart, Area, ResponsiveContainer,YAxis,Tooltip } from "recharts";
 
-const data = [
-  { value: 10 },
-  { value: 15 },
-  { value: 12 },
-  { value: 18 },
-  { value: 16 },
-  { value: 22 },
-  { value: 20 },
-];
+import { useEffect, useRef, useState } from "react";
 
-export default function MiniAreaChart() {
+export default function MiniAreaChart(props : any) {
+ type Samples = {
+  value: number;
+};
+
+ 
+  //const samplesData= props.data
+ 
+  
+  //console.log(props.data)
+const [samples20Ref, Setsamples20Ref] = useState<Samples[]>([]);
+ 
+ 
+
+  const samples = () => {
+  Setsamples20Ref(prev => [
+    ...prev,
+    { value: props.data }
+  ].slice(-20)); // keep last 20
+};
+  
+  
+ useEffect(() => {
+    if (!props.data) return;
+    // update ref or perform other side effects when props.data changes
+    samples()
+   //console.log( samples20Ref.current);
+  }, [props.mykey, props.data]);
+
+
   return (
-   <div
-  className="w-[100px]  mt-5 "
 
->
-    <ResponsiveContainer   width="100%" aspect={3}  minHeight={undefined}>
-          <AreaChart data={data}>
+    <ResponsiveContainer   width="100%"   >
+          <AreaChart data={ samples20Ref}
+           margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+          >
+            
             
             {/* Gradient Definition */}
             <defs>
@@ -30,6 +47,20 @@ export default function MiniAreaChart() {
                 <stop offset="100%" stopColor="#ffffff" stopOpacity={0}/>
               </linearGradient>
             </defs>
+
+<YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} 
+ axisLine={false}
+  tickLine={false}
+  tick={{ fontSize: 10,  }}
+/>
+<Tooltip content={({ payload }) => {
+  if (!payload || !payload.length) return null;
+  return (
+    <div style={{  background: "rgba(255, 255, 255, 0.7)" , padding: 5 }}>
+      {payload[0].value}
+    </div>
+  );
+}} />
 
             {/* Area */}
             <Area
@@ -42,7 +73,7 @@ export default function MiniAreaChart() {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+
 
  
   );
