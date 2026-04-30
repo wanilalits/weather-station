@@ -9,11 +9,11 @@ import altitudeIcon from '../assets/Images/altitude.svg';
 import { useSelector } from 'react-redux';
 
 export default function Card() {
-  type RootState = {
+ /*  type RootState = {
     specificdevices: {
       [key: string]: string | number | null;
     }[];
-  };
+  }; */
 
   type DeviceData = {
     deviceId: string;
