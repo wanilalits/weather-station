@@ -1,6 +1,6 @@
 import {AreaChart, Area, ResponsiveContainer,YAxis,Tooltip } from "recharts";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function MiniAreaChart(props : any) {
  type Samples = {

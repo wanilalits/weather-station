@@ -6,8 +6,8 @@ import humidityIcon from '../assets/Images/humidity.svg';
 import airPressureIcon from '../assets/Images/airPressure.svg';
 import realFeeIcon from '../assets/Images/realFee.svg';
 import altitudeIcon from '../assets/Images/altitude.svg';
-
 import { useSelector } from 'react-redux';
+
 export default function Card() {
   type RootState = {
     specificdevices: {
@@ -246,11 +246,7 @@ export default function Card() {
                 </h2>
 
    <div
-className="flex-1 h-[50px] "
- // style={{ display: "inline-block",
-  //  position: "relative"
- //  }}
->
+className="flex-1 h-[50px] ">
    <AreaChart  data ={formatNumber(card.value)} mykey ={card.timestampFront} />  
         </div>
 
