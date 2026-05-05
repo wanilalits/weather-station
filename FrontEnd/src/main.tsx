@@ -1,11 +1,11 @@
-import React from "react";
+//import React from "react";
 import ReactDOM from "react-dom/client";
 import App from './App.tsx'
 import './index.css'
 import "./index.css";
 
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+//import { createRoot } from 'react-dom/client'
 import { Provider } from "react-redux";
 import { store } from "./features/store.ts"; // ✅ IMPORTANT
 import { BrowserRouter } from 'react-router-dom'
