@@ -11,7 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const App: React.FC = () => {
   
    const isAuth: string | null = localStorage.getItem("token");
-  return (
+ 
+   return (
      <Routes>
       {/* Default route */}
       <Route
