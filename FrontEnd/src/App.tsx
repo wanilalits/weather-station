@@ -1,111 +1,40 @@
-import { useEffect } from 'react';
+
 import React from 'react';
-import Card from './components/Card';;
-import { useWebSocket } from "./hooks/useWebSocket";
-import DashboardHeader from './components/DashboardHeader';
-import  BarChartCard  from './components/BarChartCard';
+import Dashboard from './components/Dashboard'
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+
+
 
 const App: React.FC = () => {
-  const { connect, disconnect } = useWebSocket(); // ✅ only once
-
-
-  useEffect(() => {
-    connect(); // ✅ run once on mount
-
-    return () => {
-      disconnect(); // cleanup
-    };
-  }, []);
-
- 
-
   
-
+   const isAuth: string | null = localStorage.getItem("token");
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-800">
-      {/* Sidebar */}
-      <aside className="w-48 bg-blue-900 text-white p-5">
-        <h2 className="text-xl font-bold mb-6">Dashboard</h2>
-        <nav className="space-y-4">
-          <p className="bg-blue-700 p-2 rounded">Dashboard</p>
-          <p className="opacity-80">Analytics</p>
-          <p className="opacity-80">Reports</p>
-          <p className="opacity-80">Users</p>
-          <p className="opacity-80">Settings</p>
-        </nav>
-      </aside>
+     <Routes>
+      {/* Default route */}
+      <Route
+        path="/"
+        element={
+          isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+        }
+      />
 
-      {/* Main */}
-      <main className="flex-1 p-6 overflow-auto">
-        {/* Header */}
-      
-      
-<DashboardHeader></DashboardHeader>
-     <Card></Card>
+      {/* Login */}
+      <Route path="/login" element={<Login />} />
 
-
-        {/* Content */}
-        <div className="grid grid-cols-3 gap-4">
-          {/* Chart Section */}
-          <div className="col-span-2 bg-white p-5 rounded-xl shadow">
-            <h2 className="font-semibold mb-4">User Engagement Trends</h2>
-
-            {/* Fake Chart */}
-            <div className="h-64 flex items-end gap-2">
-                  <BarChartCard></BarChartCard>
-            </div>
-          </div>
-
-          {/* Right Panel */}
-          <div className="space-y-4">
-            {/* Traffic */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h2 className="font-semibold mb-3">Traffic Sources</h2>
-              <div className="space-y-2 text-sm">
-                <p>Organic Search - 46%</p>
-                <p>Direct - 28%</p>
-                <p>Referral - 17%</p>
-              </div>
-            </div>
-
-            {/* Top Pages */}
-            <div className="bg-white p-4 rounded-xl shadow">
-              <h2 className="font-semibold mb-3">Top Pages</h2>
-
-              {[
-                {
-                  name: '/home',
-                  value: 400,
-                },
-                {
-                  name: '/features',
-                  value: 300,
-                },
-                {
-                  name: '/pricing',
-                  value: 180,
-                },
-              ].map((item, i) => (
-                <div key={i} className="mb-2">
-                  <div className="flex justify-between text-sm">
-                    <span>{item.name}</span>
-                    <span>{item.value}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 h-2 rounded mt-1">
-                    <div
-                      className="bg-blue-500 h-2 rounded"
-                      style={{
-                        width: `${item.value / 4}%`,
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      {/* Protected */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+    
   );
 };
 
