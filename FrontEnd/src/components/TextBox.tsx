@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 
 
 type TextBoxProps = {
-  value: string;
-  setValue: (val: string) => void;
+  valuer: string;
+  setValuer: (val: string) => void;
   placeholder?: string;
   type?: 'text' | 'number';
   width?: string;
@@ -12,8 +12,8 @@ type TextBoxProps = {
 };
 
 const CustomTextBox: React.FC<TextBoxProps> = ({
-  value,
-  setValue,
+  valuer,
+  setValuer,
   placeholder = '',
   type = 'text',
   //width = '200px',
@@ -42,7 +42,7 @@ const CustomTextBox: React.FC<TextBoxProps> = ({
 
     // 👉 update value only if valid
     if (valid) {
-      setValue(inputVal);
+      setValuer(inputVal);
     }
   };
 
@@ -50,14 +50,14 @@ const CustomTextBox: React.FC<TextBoxProps> = ({
  useEffect(() => {
     // Validate age whenever isAgeValid changes
     //  console.log(type, value, isValid);
-  }, [value]);
+  }, [valuer]);
 
 
 
 
   return (
     <input
-      value={value}
+      value={valuer}
       onChange={handleChange}
       placeholder={placeholder}
        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-2/4"

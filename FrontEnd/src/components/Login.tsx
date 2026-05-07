@@ -43,8 +43,8 @@ const Login: React.FC = () => {
         {/* Username */}
         <div className="mb-4">
       <CustomTextBox
-        value={username}
-        setValue={setUsername}
+        valuer={username}
+        setValuer={setUsername}
         placeholder="Enter name"
         type="text"
         width="250px"
@@ -54,8 +54,8 @@ const Login: React.FC = () => {
         {/* Password */}
         <div className="mb-6">
          <CustomTextBox
-        value={password}
-        setValue={setPassword}
+        valuer={password}
+        setValuer={setPassword}
         placeholder="Enter Password"
         type="text"
         width="250px"
