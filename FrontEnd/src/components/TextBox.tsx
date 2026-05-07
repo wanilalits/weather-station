@@ -16,9 +16,9 @@ const CustomTextBox: React.FC<TextBoxProps> = ({
   setValue,
   placeholder = '',
   type = 'text',
-  width = '200px',
+  //width = '200px',
  // isValid,
-  setIsValid,
+  //setIsValid,
 }) => {
  const handleChange = (e:any) => {
     const inputVal = e.target.value;
