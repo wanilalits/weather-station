@@ -1,11 +1,24 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import CustomTextBox from './TextBox';
+
+
+
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  // useEffect dependency on isAgeValid
+ useEffect(() => {
+    // Validate age whenever isAgeValid changes
+  
+    console.log( username);
+    
+  }, [username]);
+
 
   const handleLogin = () => {
     // dummy validation
@@ -15,10 +28,13 @@ const Login: React.FC = () => {
     }
   };
 
+
+
+
   return (
-   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
-      
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+       <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
         
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Login
@@ -26,24 +42,24 @@ const Login: React.FC = () => {
 
         {/* Username */}
         <div className="mb-4">
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+      <CustomTextBox
+        value={username}
+        setValue={setUsername}
+        placeholder="Enter name"
+        type="text"
+        width="250px"
+      />
         </div>
 
         {/* Password */}
         <div className="mb-6">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+         <CustomTextBox
+        value={password}
+        setValue={setPassword}
+        placeholder="Enter Password"
+        type="text"
+        width="250px"
+      />
         </div>
 
         {/* Button */}
