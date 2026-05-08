@@ -87,17 +87,18 @@ const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
-
+        
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Login</h2>
         {/* Username */}
         <div className="mb-4">
           <CustomTextBox ref={userRef} value={username} setValuer={setUsername} placeholder="Enter ID" lableText="User ID" errorText={userIdError} />
         </div>
 
         {/* Password */}
-        <div className="mb-6">
+        <div className="mb-4">
           <CustomTextBox ref={passwordRef} value={password} setValuer={setPassword}  type={showPassword ? "text" : "password"} placeholder="Enter Password" lableText="Password" errorText={passwordError} />
-        <input
+      <div className="flex items-center gap-1 mt-2"> 
+      <input
     type="checkbox"
     checked={showPassword}
     onChange={(e) =>
@@ -109,15 +110,16 @@ const [showPassword, setShowPassword] = useState(false);
   <label className="text-sm text-gray-700">
     Show Password
   </label>
+</div>
         </div>
 
         {/* Button */}
-        <button onClick={handleLogin} className="w-full  bg-[#007498] text-white py-2 rounded-lg font-semibold hover:bg-[#015e7a] transition duration-300">
+        <button onClick={handleLogin} className="w-full  bg-[#007498] text-white py-2.5 rounded-lg font-semibold hover:bg-[#015e7a] cursor-pointer transition duration-300">
           Login
         </button>
         <br></br>
         <br></br>
-        <h2 className="text-black text-base mb-0 text-center">
+        <h2 className="text-black text-base mb-0 text-center ">
           Forgot{' '}
           <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer ">
             {' '}
