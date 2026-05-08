@@ -1,31 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import CustomTextBox from './TextBox';
-
-
-
-
+import ErrorMessage from "./ErrorMessage";
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const [userIDerrorText, setUserIDerror] = useState<string>("");
+  const [passworderrorText, setPassworderrorText] = useState<string>("");
   // useEffect dependency on isAgeValid
  useEffect(() => {
-    // Validate age whenever isAgeValid changes
+const token = localStorage.getItem("token");
+
+    // If token exists
+    if (token) {
+      navigate("/dashboard");
+    }
+
   
-    console.log( username);
+  
     
-  }, [username]);
+  }, []);
 
 
   const handleLogin = () => {
     // dummy validation
-    if (username && password) {
+   if(!username){
+setUserIDerror("Username should not be empty")
+}
+
+  else if(!password){
+setPassworderrorText("Password should not be empty")
+}
+     if (username && password) {
       localStorage.setItem("token", "my-token");
       navigate("/dashboard");
     }
+
   };
 
 
@@ -43,33 +55,47 @@ const Login: React.FC = () => {
         {/* Username */}
         <div className="mb-4">
       <CustomTextBox
-        valuer={username}
+        value={username}
         setValuer={setUsername}
-        placeholder="Enter name"
+        placeholder="Enter ID"
         type="text"
-        width="250px"
-      />
-        </div>
+     lableText="User ID"
+     errorText= {username ? "" : "Username should not be empty"}
+     />
+      </div>
 
         {/* Password */}
         <div className="mb-6">
          <CustomTextBox
-        valuer={password}
+        value={password}
         setValuer={setPassword}
         placeholder="Enter Password"
         type="text"
-        width="250px"
+         lableText="Password"
+     errorText=  {password ? "" : "Password should not be empty"}
       />
         </div>
 
         {/* Button */}
         <button
           onClick={handleLogin}
-          className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300"
-        >
-          Login
+          className="w-full  bg-[#007498] text-white py-2 rounded-lg font-semibold hover:bg-[#015e7a] transition duration-300"
+        >Login
         </button>
+        <br></br>
+            <br></br>
+<h2 className="text-black text-base mb-0 text-center">
+  Forgot{" "}
+  <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer " > Username / Password? </a>
+</h2>
+     
+<h2 className="text-black text-base mb-0 
+text-center">
+    Don't have an account?{" "}
+  <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer " > Sign up </a>
+</h2>
 
+    
       </div>
     </div>
   );

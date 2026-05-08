@@ -2,20 +2,24 @@ import React, { useEffect } from 'react';
 
 
 type TextBoxProps = {
-  valuer: string;
-  setValuer: (val: string) => void;
+  value: string;
+   setValuer: (val: string) => void;
   placeholder?: string;
   type?: 'text' | 'number';
   width?: string;
- // isValid: boolean;
+lableText?:String
+errorText?:String
   setIsValid?: (val: boolean) => void;
+  // isValid: boolean;
 };
 
 const CustomTextBox: React.FC<TextBoxProps> = ({
-  valuer,
+  value,
   setValuer,
   placeholder = '',
   type = 'text',
+  lableText,
+  errorText
   //width = '200px',
  // isValid,
   //setIsValid,
@@ -46,27 +50,36 @@ const CustomTextBox: React.FC<TextBoxProps> = ({
     }
   };
 
-// useEffect dependency on isAgeValid
- useEffect(() => {
-    // Validate age whenever isAgeValid changes
-    //  console.log(type, value, isValid);
-  }, [valuer]);
-
 
 
 
   return (
+    
+    <><p className="text-black text-base mb-0">
+      <>{lableText}*</>
+      </p>
     <input
-      value={valuer}
+      value={value}
       onChange={handleChange}
       placeholder={placeholder}
-       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-2/4"
+       className="w-full
+px-3
+py-2
+text-base
+border
+border-gray-300
+rounded-lg"
       style={{
        // width: width,
         // 👇 use parent's validation state
        // backgroundColor: isValid ? 'white' : '#ffdddd',
       }}
     />
+ <p className="text-red-500 text-xs mt-0">
+      {errorText}
+      </p>
+
+    </>
   );
 };
 
