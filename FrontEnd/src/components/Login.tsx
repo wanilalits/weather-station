@@ -13,13 +13,9 @@ const Login: React.FC = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const focusUsername = () => {
-    userRef.current?.focus();
-  };
+  
 
-  const focusPassword = () => {
-    passwordRef.current?.focus();
-  };
+  
 
   // useEffect dependency on isAgeValid
   useEffect(() => {
@@ -39,10 +35,7 @@ const Login: React.FC = () => {
   }
 }, [loading]);
 
-  /* useEffect(() => {
-console.log(username, password)
-  }, [username, password]);
- */
+ 
   // Prevent login form flash
   if (loading) {
     return null;
