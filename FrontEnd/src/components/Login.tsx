@@ -1,14 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import CustomTextBox from './TextBox';
-import ErrorMessage from "./ErrorMessage";
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [userIDerrorText, setUserIDerror] = useState<string>("");
-  const [passworderrorText, setPassworderrorText] = useState<string>("");
+
   // useEffect dependency on isAgeValid
  useEffect(() => {
 const token = localStorage.getItem("token");
@@ -27,11 +26,11 @@ const token = localStorage.getItem("token");
   const handleLogin = () => {
     // dummy validation
    if(!username){
-setUserIDerror("Username should not be empty")
+
 }
 
   else if(!password){
-setPassworderrorText("Password should not be empty")
+
 }
      if (username && password) {
       localStorage.setItem("token", "my-token");
