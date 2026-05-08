@@ -137,7 +137,7 @@ text-center"
         </h2>
         <br></br> 
         <p className="text-slate-500 text-xs mt-1">
-             UserId: user@gmail.com
+             Userid: user@gmail.com
             </p>
             <p className="text-slate-500 text-xs mt-1">
              password: Password@123
