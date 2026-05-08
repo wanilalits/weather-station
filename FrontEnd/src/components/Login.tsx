@@ -45,12 +45,12 @@ const Login: React.FC = () => {
     const usernamePattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!value) {
       userRef.current?.focus();
-      return 'UserId should not be empty';
+      return 'Userid should not be empty';
          
     }
     if (!usernamePattern.test(value)) {
          userRef.current?.focus();
-      return 'Username should match emailid@gmail.com';
+      return 'Userid should match emailid@gmail.com';
        
     }
     return '';
