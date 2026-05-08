@@ -1,100 +1,142 @@
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import CustomTextBox from './TextBox';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [userIdError, setUserIdError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const userRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  const focusUsername = () => {
+    userRef.current?.focus();
+  };
+
+  const focusPassword = () => {
+    passwordRef.current?.focus();
+  };
+
+  // useEffect dependency on isAgeValid
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/dashboard');
+    } else {
+      setLoading(false);
+      ///focusPassword();
+    }
+  }, [navigate]);
 
   // useEffect dependency on isAgeValid
  useEffect(() => {
-const token = localStorage.getItem("token");
+  if (!loading) {
+    userRef.current?.focus();
+  }
+}, [loading]);
 
-    // If token exists
-    if (token) {
-      navigate("/dashboard");
+  /* useEffect(() => {
+console.log(username, password)
+  }, [username, password]);
+ */
+  // Prevent login form flash
+  if (loading) {
+    return null;
+  }
+
+  const validateUsername = (value: string) => {
+    const usernamePattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!value) {
+      userRef.current?.focus();
+      return 'UserId should not be empty';
+         
     }
-
-  
-  
-    
-  }, []);
-
-
-  const handleLogin = () => {
-    // dummy validation
-   if(!username){
-
-}
-
-  else if(!password){
-
-}
-     if (username && password) {
-      localStorage.setItem("token", "my-token");
-      navigate("/dashboard");
+    if (!usernamePattern.test(value)) {
+         userRef.current?.focus();
+      return 'Username should match emailid@gmail.com';
+       
     }
-
+    return '';
   };
 
+  const validatePassword = (value: string) => {
+  
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$/;
+    if (!value) {
+      passwordRef.current?.focus();
+      return 'Password should not be empty';
+    }
+    if (!passwordPattern.test(value)) {
+      passwordRef.current?.focus();
+      return 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol';
+    }
+    return '';
+  };
 
+  const handleLogin = () => {
+    const passwordValidationError = validatePassword(password);
+    const usernameValidationError = validateUsername(username);
+    
 
+    setUserIdError(usernameValidationError);
+    setPasswordError(passwordValidationError);
+
+    if (!usernameValidationError && !passwordValidationError) {
+      localStorage.setItem('token', 'my-token');
+      navigate('/dashboard');
+    }
+  };
 
   return (
-
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-       <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-        
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Login
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-sm mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
 
         {/* Username */}
         <div className="mb-4">
-      <CustomTextBox
-        value={username}
-        setValuer={setUsername}
-        placeholder="Enter ID"
-        type="text"
-     lableText="User ID"
-     errorText= {username ? "" : "Username should not be empty"}
-     />
-      </div>
+          <CustomTextBox ref={userRef} value={username} setValuer={setUsername} placeholder="Enter ID" lableText="User ID" errorText={userIdError} />
+        </div>
 
         {/* Password */}
         <div className="mb-6">
-         <CustomTextBox
-        value={password}
-        setValuer={setPassword}
-        placeholder="Enter Password"
-        type="text"
-         lableText="Password"
-     errorText=  {password ? "" : "Password should not be empty"}
-      />
+          <CustomTextBox ref={passwordRef} value={password} setValuer={setPassword} placeholder="Enter Password" lableText="Password" errorText={passwordError} />
         </div>
 
         {/* Button */}
-        <button
-          onClick={handleLogin}
-          className="w-full  bg-[#007498] text-white py-2 rounded-lg font-semibold hover:bg-[#015e7a] transition duration-300"
-        >Login
+        <button onClick={handleLogin} className="w-full  bg-[#007498] text-white py-2 rounded-lg font-semibold hover:bg-[#015e7a] transition duration-300">
+          Login
         </button>
         <br></br>
-            <br></br>
-<h2 className="text-black text-base mb-0 text-center">
-  Forgot{" "}
-  <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer " > Username / Password? </a>
-</h2>
-     
-<h2 className="text-black text-base mb-0 
-text-center">
-    Don't have an account?{" "}
-  <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer " > Sign up </a>
-</h2>
+        <br></br>
+        <h2 className="text-black text-base mb-0 text-center">
+          Forgot{' '}
+          <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer ">
+            {' '}
+            Username / Password?{' '}
+          </a>
+        </h2>
 
-    
+        <h2
+          className="text-black text-base mb-0 
+text-center"
+        >
+          Don't have an account?{' '}
+          <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer ">
+            {' '}
+            Sign up{' '}
+          </a>
+        </h2>
+        <br></br> 
+        <p className="text-slate-500 text-xs mt-1">
+             UserId: user@gmail.com
+            </p>
+            <p className="text-slate-500 text-xs mt-1">
+             password: Password@123
+            </p>
       </div>
     </div>
   );

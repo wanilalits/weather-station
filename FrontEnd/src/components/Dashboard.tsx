@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef  } from 'react';
 import React from 'react';
 import Card from './Card';
 import { useWebSocket } from '../hooks/useWebSocket';
