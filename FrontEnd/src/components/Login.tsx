@@ -9,7 +9,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [userIdError, setUserIdError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-
+const [showPassword, setShowPassword] = useState(false);
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -96,7 +96,19 @@ const Login: React.FC = () => {
 
         {/* Password */}
         <div className="mb-6">
-          <CustomTextBox ref={passwordRef} value={password} setValuer={setPassword} placeholder="Enter Password" lableText="Password" errorText={passwordError} />
+          <CustomTextBox ref={passwordRef} value={password} setValuer={setPassword}  type={showPassword ? "text" : "password"} placeholder="Enter Password" lableText="Password" errorText={passwordError} />
+        <input
+    type="checkbox"
+    checked={showPassword}
+    onChange={(e) =>
+      setShowPassword(e.target.checked)
+    }
+    className="mr-2 cursor-pointer"
+  />
+
+  <label className="text-sm text-gray-700">
+    Show Password
+  </label>
         </div>
 
         {/* Button */}

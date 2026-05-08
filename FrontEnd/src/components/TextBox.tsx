@@ -18,7 +18,7 @@ const CustomTextBox = forwardRef<HTMLInputElement, TextBoxProps>(
       placeholder = "",
       lableText,
       errorText,
-      type = "text",
+      type ,
     },
     ref
   ) => {
