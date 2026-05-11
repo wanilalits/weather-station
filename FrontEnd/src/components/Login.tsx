@@ -88,7 +88,7 @@ const [showPassword, setShowPassword] = useState(false);
     <div className="min-h-dvh flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm  bg-white p-8 rounded-2xl shadow-xl border border-gray-200 mx-4">
         
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Login</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">Login</h2>
         {/* Username */}
         <div className="mb-4">
           <CustomTextBox ref={userRef} value={username} setValuer={setUsername} placeholder="Enter ID" lableText="User ID" errorText={userIdError} />
