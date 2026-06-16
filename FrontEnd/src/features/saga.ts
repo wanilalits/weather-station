@@ -1,12 +1,16 @@
 // saga.ts
 
-import { takeEvery, put,  delay, fork } from "redux-saga/effects";
+import { takeEvery,  delay, fork, call, put, takeLatest } from "redux-saga/effects";
 import { updateDevice, updateDevicesamples } from "../features/deviceSlice";
+import { loginApi } from "../services/authService";
+import { loginFailure, loginRequest, loginSuccess } from "./authSlice";
+import type { PayloadAction } from "@reduxjs/toolkit";
+
+
 
 // ==============================
 // 🟢 1. WebSocket Data Handling
 // ==============================
-
 // 👉 Worker saga
 function* handleSocketData(action: any): any {
  //console.log("📩 [SAGA] Action received:", action);
@@ -23,7 +27,6 @@ function* handleSocketData(action: any): any {
    // console.error("Socket Error:", error);
   }
 }
-
 // 👉 Watcher saga
 function* watchSocket() {
   // 👉 
@@ -35,7 +38,6 @@ function* watchSocket() {
 // ==============================
 // 🟡 2. 1 Hour API Call (Background Job)
 // ==============================
-
 // 👉 Worker saga
 function* hourlyApiCall(): any {
   while (true) {
@@ -59,15 +61,57 @@ function* hourlyApiCall(): any {
     // 👉 Marathi:
     // 1 तास थांबा (1 hour delay)
     yield delay(60 * 60 * 1000);
+  }}
+
+
+// ==============================
+// 🟡 3. Login Job
+// ==============================
+function* loginWorker(action: PayloadAction<{ email: string; password: string }>) {
+  try {
+    console.log("2. saga: loginWorker started", action.payload);
+    const response: {success: boolean; body: string; token: string;} = yield call(loginApi, action.payload);
+    console.log("4. saga: API response received", response);
+
+    if (response.success) {
+        console.log("4.1. saga: Dispatching loginSuccess" );
+      yield put( 
+        loginSuccess({
+          userName: response.body,
+          token: response.token,
+        })
+      );
+    } else {
+      console.log("4.1. saga: Dispatching loginFailure" );
+      yield put(loginFailure("Invalid login response"));
+    }
+  } catch (error: any) {
+   console.log("4.1. saga: Dispatching error" );
+    yield put(loginFailure(error.message || "Login failed"));
   }
 }
+
+
+
 
 
 // ==============================
 // 🔴 Root Saga
 // ==============================
-
 export default function* rootSaga() {
   yield fork(watchSocket);     // listen websocket data
   yield fork(hourlyApiCall);   // run background job
+  yield takeLatest(loginRequest.type, loginWorker); // login job
+  
 }
+
+
+/*call()      => await API
+put()       => dispatch()
+select()    => getState()
+delay()     => setTimeout()
+take()      => wait for action
+takeLatest()=> only newest request
+takeEvery()=> every request
+fork()      => background task
+*/

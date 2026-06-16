@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "./saga";
 import deviceReducer from "../features/deviceSlice";
+import authReducer from "./authSlice";
 //console.log("🚀 [STORE] Creating Redux Store...");
 
 // 👉 Create saga middleware
@@ -12,6 +13,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     device: deviceReducer,
+      auth: authReducer,
   },
 
   // 👉 IMPORTANT:
@@ -26,3 +28,6 @@ export const store = configureStore({
 sagaMiddleware.run(rootSaga);
 
 //console.log("🔥 [SAGA] Saga Started");
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

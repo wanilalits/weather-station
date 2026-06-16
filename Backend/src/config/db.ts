@@ -6,6 +6,6 @@ export async function connectDB() {
     console.log("MongoDB connected ✅");
   } catch (err) {
     console.error("DB Error:", err);
-    process.exit(1);
+    //process.exit(1); //if database no connected then exist the app
   }
 }

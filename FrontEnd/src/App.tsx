@@ -1,41 +1,35 @@
 
-import React from 'react';
-import Dashboard from './components/Dashboard'
-import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 
+import {BrowserRouter, Routes,  Route} from "react-router-dom";
+import WeatherDashboard from './pages/WeatherDashboard'
+import Login from "./pages/Login";
+import ProtectedRoute from './routes/ProtectedRoute'
 
 
-const App: React.FC = () => {
+const App: React.FC = () => { 
   
-   const isAuth: string | null = localStorage.getItem("token");
- 
+   
    return (
-     <Routes>
+      <BrowserRouter>
+    <Routes>
       {/* Default route */}
-      <Route
-        path="/"
-        element={
-          isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-        }
-      />
-
-      {/* Login */}
+    <Route path="/" element={<Login />} />
+     
+      {/* Public */}
       <Route path="/login" element={<Login />} />
 
       {/* Protected */}
       <Route
-        path="/dashboard"
+        path="/WeatherDashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <WeatherDashboard />
           </ProtectedRoute>
         }
       />
     </Routes>
-    
+    </BrowserRouter>
   );
 };
 
