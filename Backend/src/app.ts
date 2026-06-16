@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // ✅ Attach WebSocket to same server
 initWebSocket(server);
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", 'https://weather-station-1-jaaq.onrender.com/']
  
   credentials: true
 }));
