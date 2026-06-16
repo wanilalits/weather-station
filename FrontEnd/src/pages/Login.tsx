@@ -18,7 +18,7 @@ const Login: React.FC = () => {
   const userRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
-  const { loading, userName: user, error, isAuthenticated, loginToken } = useSelector((state: RootState) => state.auth);
+  const { loading,  error, loginToken } = useSelector((state: RootState) => state.auth);
 
 
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import {  useEffect } from 'react';
 import {Bell, CloudSun, Droplets, Gauge, MapPin, Search,Sun,Wind,} from "lucide-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from "../features/authSlice";
@@ -49,7 +49,7 @@ const StatCard = ({
 
 
 export default function WeatherDashboard() {
-const { loading, userName: user, error, isAuthenticated, loginToken } = useSelector((state: RootState) => state.auth);
+const { userName: user,  loginToken } = useSelector((state: RootState) => state.auth);
 const dispatch = useDispatch();
 const navigate = useNavigate();
  
