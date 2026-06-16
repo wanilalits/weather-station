@@ -120,7 +120,7 @@ dispatch(logout());
             <h2 className="text-4xl font-bold text-gray-900">
               Good morning, {user} 👋
             </h2>
-            <p className="text-gray-500 mt-1">Here's your weather update</p>
+            <p className="text-gray-500 mt-1">Page Under Developement</p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -264,7 +264,7 @@ dispatch(logout());
         </section>
       </main>
     </div>
-    hhhhhhhhhh
+
     </>
   );
 }
