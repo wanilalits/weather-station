@@ -114,8 +114,7 @@ useEffect(() => { //  handle Login Failure massage
           {loading ? 'Logging in...' : 'Login'}
         </button>
         {loading ? '' : <p className="text-red-500 text-xs mt-1">{loginError}</p>}
-        <br></br>
-        <br></br>
+    
         <h2 className="text-black text-base mb-0 text-center ">
           Forgot{' '}
           <a href="" className=" text-[#015e7a]   hover:underline   cursor-pointer ">
