@@ -11,10 +11,9 @@ export interface LoginResponse {
 
 export const loginApi = async (payload: LoginPayload): Promise<LoginResponse> => {
   console.log("3. authService: calling login API", payload);
-  //const API_ROOT = import.meta.env.VITE_API_ROOT;
-
-  //const response = await fetch(`${API_ROOT}/login`, 
-  const response = await fetch(`https://weather-station-ch7x.onrender.com/login`, 
+  const API_ROOT = import.meta.env.VITE_API_ROOT;
+  
+  const response = await fetch(`${API_ROOT}/login`, 
     {
     method: "POST",
     headers: {"Content-Type": "application/json",},
