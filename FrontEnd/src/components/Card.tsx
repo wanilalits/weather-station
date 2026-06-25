@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import AreaChart from './AreaChart';
+
 import temperatureIcon from '../assets/Images/temperature.svg';
 import humidityIcon from '../assets/Images/humidity.svg';
 //import batteryIcon from '../assets/Images/battery.svg';
@@ -247,7 +247,7 @@ export default function Card() {
 
    <div
 className="flex-1 h-[50px] ">
-   <AreaChart  data ={formatNumber(card.value)} mykey ={card.timestampFront} />  
+  
         </div>
 
                  

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Bell, CloudSun, Droplets, Gauge, MapPin, Search, Sun, Wind } from 'lucide-react';
+import { Droplets, Gauge } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deviceDataRequest, clearDeviceData } from '../features/deviceDataSlice';
 import type { RootState } from '../features/store';
-import { useNavigate } from 'react-router-dom';
+
 
 import Graph from '../components/Graph'
 import Header from '../components/TopHeader';

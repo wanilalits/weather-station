@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,} from "recharts";
 import type { RootState } from '../features/store';
 import { useDispatch, useSelector } from 'react-redux';
