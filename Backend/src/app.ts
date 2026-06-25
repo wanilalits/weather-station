@@ -5,6 +5,7 @@ dotenv.config();
 import sensorRoutes from "./modules/sensor/sensor.routes";
 import userRoutes from "./modules/user/user.routes";
 import protectedRoutes from "./modules/protected/protected.routes";
+import protectedSensorRoutes from "./modules/protectedSensorRoutes/protectedSensorRoutes.routes";
 import { initWebSocket } from "./websocket/wsServer";
 import http from "http";
 import cors from "cors";
@@ -30,6 +31,7 @@ app.use(express.json());
 // Middleware for route
 app.use("/", userRoutes);
 app.use("/", protectedRoutes);
+app.use("/", protectedSensorRoutes);
 app.use("/", sensorRoutes);
 
 // Simple homepage route

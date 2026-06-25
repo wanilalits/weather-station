@@ -8,7 +8,7 @@ function ProtectedRoute({ children }: Props) {
   const loginToken = localStorage.getItem("loginToken");
 
   if (!loginToken) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

@@ -1,8 +1,21 @@
 // saga.ts
+interface SensorDataResponse {
+  success: boolean;
+  count: number;
+  data: Array<{
+    _id: string;
+    deviceId: string;
+    [key: string]: any;
+  }>;
+}
+
+
 
 import { takeEvery,  delay, fork, call, put, takeLatest } from "redux-saga/effects";
-import { updateDevice, updateDevicesamples } from "../features/deviceSlice";
+import { updateDevice, updateDevicesamples } from "./deviceSlice";
 import { loginApi } from "../services/authService";
+import { deviceDataAPI } from "../services/deviceDataService";
+import {deviceDataRequest, deviceData} from "./deviceDataSlice";
 import { loginFailure, loginRequest, loginSuccess } from "./authSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -33,7 +46,6 @@ function* watchSocket() {
   // SOCKET_DATA action आला की handleSocketData चालेल
   yield takeEvery("SOCKET_DATA", handleSocketData);
 }
-
 
 // ==============================
 // 🟡 2. 1 Hour API Call (Background Job)
@@ -75,11 +87,7 @@ function* loginWorker(action: PayloadAction<{ email: string; password: string }>
 
     if (response.success) {
         console.log("4.1. saga: Dispatching loginSuccess" );
-      yield put( 
-        loginSuccess({
-          userName: response.body,
-          token: response.token,
-        })
+      yield put( loginSuccess({userName: response.body, token: response.token, })
       );
     } else {
       console.log("4.1. saga: Dispatching loginFailure" );
@@ -92,7 +100,24 @@ function* loginWorker(action: PayloadAction<{ email: string; password: string }>
 }
 
 
+function* deviveDataWorker(action: PayloadAction<{deviceid: string; startdate: string; enddate: string; limit: string; authToken: string }>) {
 
+  try {
+ 
+   const response: { success: boolean; count: number; data: any[];} = yield call(deviceDataAPI, action.payload);
+   
+    if (response.success) {
+      
+      yield put( deviceData({data: response.data}));
+    } else {
+   
+     // yield put(loginFailure("Invalid login response"));
+    }
+  } catch (error: any) {
+
+   // yield put(loginFailure(error.message || "Login failed"));
+  }
+}
 
 
 // ==============================
@@ -102,7 +127,7 @@ export default function* rootSaga() {
   yield fork(watchSocket);     // listen websocket data
   yield fork(hourlyApiCall);   // run background job
   yield takeLatest(loginRequest.type, loginWorker); // login job
-  
+  yield takeLatest(deviceDataRequest.type, deviveDataWorker); // login job
 }
 
 
@@ -114,4 +139,5 @@ take()      => wait for action
 takeLatest()=> only newest request
 takeEvery()=> every request
 fork()      => background task
+Yield    => generator function
 */

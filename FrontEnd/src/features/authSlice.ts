@@ -2,22 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface LoginPayload {email: string; password: string;}
-
 interface AuthState { loading: boolean; userName: string | null; token: string | null; error: string | null; isAuthenticated: boolean; loginToken?: string | null; }
 
-const initialState: AuthState = {
-  loading: false,
-  userName: null,
-  token: null,
-  error: null,
-  isAuthenticated: false,
-  loginToken: null,
-};
+const initialState: AuthState = {loading: false, userName: null, token: null, error: null, isAuthenticated: false,loginToken: null,};
 
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
+const authSlice = createSlice({ name: "auth", initialState, reducers: {
     loginRequest: (state, action: PayloadAction<LoginPayload>) => {
      console.log("1. Slice reducer: loginRequest", action.payload);
       state.loading = true;

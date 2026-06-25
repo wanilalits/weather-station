@@ -1,17 +1,11 @@
 // features/deviceSlice.ts
-
 import { createSlice } from "@reduxjs/toolkit";        // ✅ value
 import type { PayloadAction } from "@reduxjs/toolkit"; // ✅ type
-
 // 👉 Device data type (तुमचा sensor structure)
 
 
 
-type DeviceData = {
-  deviceId: string | null ;
-  [key: string]: string | number | null;
-};
-
+type DeviceData = {deviceId: string | null ;[key: string]: string | number | null;};
 type DeviceState = {
   devices: Record<string, DeviceData[]>; // key = deviceId → latest data (फक्त latest record ठेवतो)
   devices1: Record<string, DeviceData[]>;  // last 20 samples
@@ -23,11 +17,8 @@ const initialState: DeviceState = {
    devices1: {},   // ✅ for 20 samples
 };
 
-
-
 const deviceSlice = createSlice({
   name: "device",
-
   initialState,
   reducers: {  
     // ✅ Store latest data per device
@@ -51,19 +42,13 @@ state.devices[data[0].deviceId] = data;
 
 
 updateDevicesamples: (state, action : PayloadAction<DeviceData[]> ) => {
- 
   const dataArr = action.payload;     // array
-  
  const data = dataArr?.[0];
-
   if (!data?.deviceId) return;
-
  const id = data.deviceId;
-
    // 1. init
   if (!state.devices1[id]) {
     state.devices1[id] = [];
-  
   }
 
   // 2. push new sample
@@ -76,8 +61,6 @@ updateDevicesamples: (state, action : PayloadAction<DeviceData[]> ) => {
   // ✅ correct log
  // console.log(state.devices1[id]);
 },
-
-
     // Optional: clear all data
     clearDevices(state) {
       state.devices = {};

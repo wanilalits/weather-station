@@ -3,7 +3,7 @@ import Sensor from "./sensor.model";
 
 // POST → save data
 export const createLog= async (req: Request, res: Response) => {
- console.log("Headers:", req.headers);
+ //console.log("Headers:", req.headers);
   console.log("Body:", req.body);
     try {
     const { deviceId, humidity } = req.body;
