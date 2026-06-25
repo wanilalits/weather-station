@@ -10,7 +10,7 @@ const initialState: SensorData[] = []
 const deviceDataSlice = createSlice({ name: "DeviceData", initialState, reducers: {
    //                   output, input
    //deviceDataRequest: (state, action: PayloadAction<APIRequest>) => {
-    deviceDataRequest: (state, ) => {
+    deviceDataRequest: (state, action: PayloadAction<APIRequest>) => {
     },
 
 
