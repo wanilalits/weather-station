@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend,} from "recharts";
 import type { RootState } from '../features/store';
 import {  useSelector } from 'react-redux';
@@ -33,11 +33,7 @@ const toggleLine = (e:any) => {
 };
 
 
-useEffect(() => {
-console.log(graphMode)
-console.log(device.devices1[1])
-console.log(deviceData)
-}, [ deviceData]);
+
 
 
   return (
