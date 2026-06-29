@@ -6,12 +6,13 @@ import rootSaga from "./saga";
 import deviceReducer from "./deviceSlice";
 import authReducer from "./authSlice";
 import deviceDataReducer from './deviceDataSlice'
+import graphInfoReducer from './graphSlice'
 //console.log("🚀 [STORE] Creating Redux Store...");
 
 // 👉 Create saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
-export const store = configureStore({reducer: { device: deviceReducer, auth: authReducer, DeviceData:deviceDataReducer},
+export const store = configureStore({reducer: { device: deviceReducer, auth: authReducer, DeviceData:deviceDataReducer, graphMode:graphInfoReducer },
 
   // 👉 IMPORTANT:
   // thunk disable करतो कारण आपण saga वापरत आहोत

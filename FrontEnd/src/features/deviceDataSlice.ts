@@ -16,7 +16,8 @@ const deviceDataSlice = createSlice({ name: "DeviceData", initialState, reducers
 
 
 deviceData: (state, action: PayloadAction<{ data: SensorData[] }>) => {
-  state.push(...action.payload.data);
+  //state.push(...action.payload.data);
+state.push(...action.payload.data.reverse());
 },
 
 

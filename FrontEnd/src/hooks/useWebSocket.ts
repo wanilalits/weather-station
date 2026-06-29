@@ -23,6 +23,8 @@ export const useWebSocket = () => {
 
   // WebSocket server URL
   const WS_URL = "wss://weather-station-ch7x.onrender.com/";
+    //const WS_URL = "ws://localhost:5000";
+//ws://localhost:5000
 
   // -------------------------------------------------------
   // Generate dummy data if socket is disconnected
@@ -43,7 +45,7 @@ export const useWebSocket = () => {
       source: "dummy",
     }];
 
-    console.log("🟡 Dummy Data Generated:", dummyData);
+    //console.log("🟡 Dummy Data Generated:", dummyData);
 
     dispatch({
       type: "SOCKET_DATA",
@@ -66,7 +68,7 @@ export const useWebSocket = () => {
 
       // If 10 sec passed without receiving data
       if (diff > 10000) {
-        console.log("⚠️ No data received for 10 seconds");
+      //  console.log("⚠️ No data received for 10 seconds");
         generateDummyData();
 
         // Reset timer so dummy data isn't generated every second
@@ -121,7 +123,7 @@ export const useWebSocket = () => {
 
     // Message received
     ws.onmessage = (event) => {
-      console.log("📩 Raw message:", event.data);
+     // console.log("📩 Raw message:", event.data);
 
       try {
         const data = JSON.parse(event.data);

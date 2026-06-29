@@ -1,16 +1,3 @@
-// saga.ts
-interface SensorDataResponse {
-  success: boolean;
-  count: number;
-  data: Array<{
-    _id: string;
-    deviceId: string;
-    [key: string]: any;
-  }>;
-}
-
-
-
 import { takeEvery,  delay, fork, call, put, takeLatest } from "redux-saga/effects";
 import { updateDevice, updateDevicesamples } from "./deviceSlice";
 import { loginApi } from "../services/authService";
@@ -29,6 +16,7 @@ function* handleSocketData(action: any): any {
  //console.log("📩 [SAGA] Action received:", action);
   try {
     const data = action.payload;
+
 //console.log("📦 [SAGA] Processing data:", data);
   //👉 इथे आपण WebSocket कडून आलेला data process करू शकतो validation, transformation, filtering वगैरे करू शकतो
     // 👉 Store in Redux

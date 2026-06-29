@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Gauge } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { deviceDataRequest, clearDeviceData } from '../features/deviceDataSlice';
 import type { RootState } from '../features/store';
+import {  useSelector } from 'react-redux';
 
 
 import Graph from '../components/Graph'
@@ -29,17 +28,19 @@ const weeklyData = [
 
 
 
-export default function WeatherDashboard() {
-  
+export default function WeatherDashboard() {  
 const [time, setTime] = useState(new Date());
-  const deviceData= useSelector((state: RootState) => state.DeviceData);
+ 
+const deviceData = useSelector((state: RootState) => state.device);
 
-const dispatch = useDispatch();
+//updateDevicesamples
+//console.log(deviceData.devices1[1][deviceData.devices1[1].length-1].tempAHT)
+//console.log(deviceData.devices1[1].length-1)
+
 useEffect(() => {
   const updateTime = () => setTime(new Date());
   // Update immediately
   updateTime();
-
   // Milliseconds until the next minute
   const now = new Date();
   const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
@@ -57,30 +58,9 @@ useEffect(() => {
 }, []);
 
 
-const testFunction = () => {
- dispatch(deviceDataRequest({
-  deviceid: "1",
-  startdate: '2026-06-25T00:00:00.000Z',
-  enddate:  '2026-06-26T00:00:00.000Z',
-  limit: 100,
-  authToken:  localStorage.getItem("loginToken")|| "not available"
-  }));
-  };
 
-const clearData = ()=>{
- dispatch(clearDeviceData());
-}
-  
- useEffect(() => {
-  testFunction()
- 
-}, []);
 
-/* useEffect(() => {
-  testFunction()
- const interval = setInterval(clearData, 15000);
-  return () => clearInterval(interval);
-}, []); */
+
 
 
 
@@ -108,7 +88,9 @@ const clearData = ()=>{
               <p className="opacity-75"> {time.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',  hour12: true, })}</p>
               <div className="flex items-start gap-1 mt-3 ">
                 <div className="text-7xl  -ml-4 ">🌤️</div>
-                <div><h3 className="text-6xl font-semibold   ">24°C</h3> <p className="opacity-80">Feels like 26°C</p></div>
+                <div><h3 className="text-6xl font-semibold">
+  {deviceData.devices1[1]?.at(-1)?.tempAHT ?? 27} °C
+</h3></div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 w-full ">
                 <div>

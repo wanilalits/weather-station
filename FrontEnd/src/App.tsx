@@ -5,11 +5,12 @@ import {BrowserRouter, Routes,  Route, Navigate } from "react-router-dom";
 import WeatherDashboard from './pages/WeatherDashboard'
 import Login from "./pages/Login";
 import ProtectedRoute from './routes/ProtectedRoute'
+import {useWebSocket} from "./hooks/useWebSocket";
 
 
 const App: React.FC = () => { 
     const loginToken = localStorage.getItem("loginToken");
-   
+    useWebSocket(); // Runs once when App mounts
    return (
       <BrowserRouter>
     <Routes>

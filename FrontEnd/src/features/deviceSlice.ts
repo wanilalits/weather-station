@@ -23,7 +23,7 @@ const deviceSlice = createSlice({
   reducers: {  
     // ✅ Store latest data per device
    
-    updateDevice(state, action: PayloadAction<DeviceData[]>) {
+updateDevice(state, action: PayloadAction<DeviceData[]>) {
        const dataWithTime = action.payload.map(item => ({
     ...item,
     timestampFront: new Date().toISOString(), // 🔥 unique + precise
@@ -40,29 +40,31 @@ state.devices[data[0].deviceId] = data;
  //  console.log (state.devices[2])
 },
 
-
 updateDevicesamples: (state, action : PayloadAction<DeviceData[]> ) => {
-  const dataArr = action.payload;     // array
- const data = dataArr?.[0];
+const dataArr = action.payload;     // array
+const data = dataArr?.[0];
   if (!data?.deviceId) return;
- const id = data.deviceId;
+const id = data.deviceId;
    // 1. init
   if (!state.devices1[id]) {
     state.devices1[id] = [];
   }
 
+  const sampleWithTime = {
+    ...data,
+    time: data.time ?? new Date().toISOString(),
+  };
+
   // 2. push new sample
-  state.devices1[id].push(data);
+  state.devices1[id].push(sampleWithTime);
   // 3. keep last 20
-  if (state.devices1[id].length > 20) {
+  if (state.devices1[id].length > 300) {
     state.devices1[id].shift();
   }
-//console.log(JSON.parse(JSON.stringify(state.devices1[1])));
-  // ✅ correct log
- // console.log(state.devices1[id]);
+ 
 },
     // Optional: clear all data
-    clearDevices(state) {
+clearDevices(state) {
       state.devices = {};
     },
   },
