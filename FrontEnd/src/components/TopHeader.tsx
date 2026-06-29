@@ -1,7 +1,8 @@
 import {Bell,  Search, Settings } from "lucide-react";
-import { useDispatch, useSelector } from 'react-redux';
+//import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch,  } from 'react-redux';
 import { logout } from "../features/authSlice";
-import type { RootState } from '../features/store';
+//import type { RootState } from '../features/store';
 import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = ({  }) => {
