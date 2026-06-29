@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = ({  }) => {
 
-  const { userName: user,  } = useSelector((state: RootState) => state.auth);
+  //const { userName: user,  } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
    
@@ -58,7 +58,7 @@ const Header: React.FC = ({  }) => {
               />
             </div>
             <Bell className="text-gray-600" />
-          
+      
             <img
               src="https://i.pravatar.cc/40"
               alt="Profile"

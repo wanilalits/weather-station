@@ -11,6 +11,7 @@ const deviceDataSlice = createSlice({ name: "DeviceData", initialState, reducers
    //                   output, input
    //deviceDataRequest: (state, action: PayloadAction<APIRequest>) => {
     deviceDataRequest: (state, action: PayloadAction<APIRequest>) => {
+console.log (state, action)
     },
 
 
