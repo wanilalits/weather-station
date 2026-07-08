@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Gauge } from 'lucide-react';
 import type { RootState } from '../features/store';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-
-import Graph from '../components/Graph'
-import Header from '../components/TopHeader';
-import TimeRangeBar from '../components/TimeRangeBar'
+import Graph from '../components/Graph';
+import Header from '../components/Header';
+import TimeRangeBar from '../components/TimeRangeBar';
+import Footer from '../components/Footer';
 const hourlyData = [
   { time: 'Now', temp: 24, icon: '🌤️' },
   { time: '9 AM', temp: 22, icon: '⛅' },
@@ -26,99 +26,85 @@ const weeklyData = [
   { day: 'Sun', weather: 'Partly Cloudy', low: 17, high: 24, icon: '⛅' },
 ];
 
+export default function WeatherDashboard() {
+  const [time, setTime] = useState(new Date());
+  const deviceData = useSelector((state: RootState) => state.device);
 
+  //updateDevicesamples
+  //console.log(deviceData.devices1[1][deviceData.devices1[1].length-1].tempAHT)
+  //console.log(deviceData.devices1[1].length-1)
 
-export default function WeatherDashboard() {  
-const [time, setTime] = useState(new Date());
- 
-const deviceData = useSelector((state: RootState) => state.device);
-
-//updateDevicesamples
-//console.log(deviceData.devices1[1][deviceData.devices1[1].length-1].tempAHT)
-//console.log(deviceData.devices1[1].length-1)
-
-useEffect(() => {
-  const updateTime = () => setTime(new Date());
-  // Update immediately
-  updateTime();
-  // Milliseconds until the next minute
-  const now = new Date();
-  const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
-  let interval :any;
-  const timeout = setTimeout(() => {
+  useEffect(() => {
+    const updateTime = () => setTime(new Date());
+    // Update immediately
     updateTime();
-    // Then update every minute
-    interval = setInterval(updateTime, 60000);
-  }, delay);
+    // Milliseconds until the next minute
+    const now = new Date();
+    const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+    let interval: any;
+    const timeout = setTimeout(() => {
+      updateTime();
+      // Then update every minute
+      interval = setInterval(updateTime, 60000);
+    }, delay);
 
-  return () => {
-    clearTimeout(timeout);
-    clearInterval(interval);
-  };
-}, []);
-
-
-
-
-
-
-
-
-
-
-
-
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <>
-  
       <div className="min-h-screen bg-gray-100 flex">
         {/* Sidebar */}
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-8 space-y-6 overflow-auto">
           {/* Header */}
-            Page Under Developement
+          Page Under Developement
           <Header />
-
           {/* Hero Section */}
           <section className="flex flex-col xl:flex-row gap-4 ">
-            <div className=" max-w-[380px] bg-gradient-to-r from-blue-600  to-indigo-600 text-white rounded-2xl p-8 shadow-lg">
+            <div className=" max-w-[380px]  bg-[#007498]  text-white rounded-2xl p-8 shadow-lg">
               <p className="text-lg opacity-90">India, Maharashtra</p>
-              <p className="opacity-75"> {time.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',  hour12: true, })}</p>
+              <p className="opacity-75"> {time.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p>
               <div className="flex items-start gap-1 mt-3 ">
                 <div className="text-7xl  -ml-4 ">🌤️</div>
-                <div><h3 className="text-6xl font-semibold">
-  {deviceData.devices1[1]?.at(-1)?.tempAHT ?? 27} °C
-</h3></div>
+                <div>
+                  <h3 className="text-6xl font-semibold  text-left"> 
+                <span className="inline-block w-24 text-left tabular-nums text-6xl font-semibold">{deviceData.devices1[1]?.at(-1)?.tempAHT ?? 27}</span>
+                    <span> °C</span>
+                    </h3>
+                </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 w-full ">
                 <div>
-  <p className="text-sm opacity-80 whitespace-nowrap">Humidity</p>
-  <p className="font-semibold flex items-center gap-1">
-    <Droplets size={16} className="text-white shrink-0" /> <span>60%</span>
-  </p>
-</div>
-
+                  <p className="text-sm opacity-80 w-96">Humidity</p>
+                  <p className="font-semibold flex items-center gap-1">
+                    <Droplets size={16} className="text-white shrink-0" />
+                    <span className="inline-block w-24 text-left tabular-nums">{deviceData.devices1[1]?.at(-1)?.humidity ?? 48}</span>
+                    <span>%</span>
+                  </p>
+                </div>
                 <div>
-  <p className="text-sm opacity-80 whitespace-nowrap">Air Pressure</p>
-  <p className="font-semibold flex items-center gap-2  whitespace-nowrap">
+                  <p className="text-sm opacity-80 w-24">Air Pressure</p>
+                  <p className="font-semibold flex items-center gap-1 w-28">
+                    <Gauge size={16} className="text-white shrink-0" /> 
+                    <span className="inline-block text-left tabular-nums"> {deviceData.devices1[1]?.at(-1)?.pressure ?? 824} hPa</span>
+                  </p>
+                </div>
+              </div>
 
-   <Gauge size={16} className="text-white shrink-0" /> <span  > 1015 hPa</span>
-  </p>
-</div>
-  </div >
-
- <p className="opacity-75 text-1xl font-light mt-2"> Last Updated at {time.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit',  hour12: true, })}</p>
-<p className="opacity-75 text-1xl font-light"> Last Chacked before 2 minuits</p>
+              <p className="opacity-75 text-1xl font-light mt-2"> Last Updated at {time.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+              <p className="opacity-75 text-1xl font-light"> Last Chacked before 2 minuits</p>
             </div>
 
             <div className="flex-1 flex flex-col bg-white ">
-           <TimeRangeBar />
-              <Graph/>
+              <TimeRangeBar />
+              <Graph />
             </div>
           </section>
-
           {/* Hourly Forecast */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-2xl font-semibold mb-6">Hourly Forecast</h3>
@@ -132,9 +118,8 @@ useEffect(() => {
               ))}
             </div>
           </section>
-
           {/* Bottom Grid */}
-          <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <section className="grid grid-cols-1 xl:grid-cols-3 gap-0">
             {/* 7-Day Forecast */}
             <div className="xl:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
               <h3 className="text-2xl font-semibold mb-6">7-Day Forecast</h3>
@@ -165,10 +150,9 @@ useEffect(() => {
               <p className="text-sm text-gray-500 text-center mt-2">Air quality is satisfactory and poses little or no risk.</p>
             </div>
           </section>
-        
         </main>
       </div>
-      ggggggggg
+     <Footer></Footer>
     </>
   );
 }

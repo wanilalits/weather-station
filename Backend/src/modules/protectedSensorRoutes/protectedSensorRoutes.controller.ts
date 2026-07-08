@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import protected_sensorsdatas  from '../sensor/sensor.model';
 import { getLogsService } from "./protectedSensorRoutes.service";
 // GET → fetch logs
 export const getLogs = async (req: Request, res: Response) => {
@@ -11,7 +10,8 @@ try {
       return res.status(400).json({success: false, message: "deviceid, startDateValue, enddateValue, limitValue headers are required",});
     }
 const logs = await getLogsService({deviceid, limit, startdate, enddate});
- res.status(200).json({ success: true, count: logs.length, data: logs, }); } 
+
+res.status(200).json({ success: true, count: logs.length, data: logs, }); } 
  
  catch (error) {
  return res.status(500).json({ success: false, message: "Failed to get logs", });

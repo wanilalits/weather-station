@@ -8,13 +8,11 @@ const device =  useSelector((state: RootState) => state.device)
 const graphMode =  useSelector((state: RootState) => state.graphMode);
 const deviceData= useSelector((state: RootState) => state.DeviceData);
 
-const sourceData =
-  graphMode.range === "live" ? device.devices1[1] : deviceData;
-
+const sourceData = graphMode.range === "live" ? device.devices1[1] : deviceData;
 const chartData = sourceData?.map((item: any) => ({
-  time: new Date(item.time).getTime(),
-  humidity: item.humidity ?? null,
-  tempAHT: item.tempAHT ?? null,
+   time: new Date(item.time).getTime(),
+   humidity: item.humidity ?? null,
+   tempAHT: item.tempAHT ?? null,
 })) ?? [];
 
 const minTime = Math.min(...chartData.map((d:any) => d.time));
