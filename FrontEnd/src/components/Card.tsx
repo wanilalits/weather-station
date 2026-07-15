@@ -10,7 +10,7 @@ type SocketStatus = {
   status: any;
   remote: any;
 };
-const SOCKET_ACTIVE_THRESHOLD_MS = 5000;
+
 
 const Card: React.FC = () => {
   const [time, setTime] = useState(new Date());
@@ -24,43 +24,14 @@ const Card: React.FC = () => {
 
   const latestSample = deviceData?.devices1?.[1]?.at(-1);
   const latestUtcTime = deviceData?.devices?.[1]?.[0]?.utcTime;
-  const stationStatus = deviceData?.socketStatus?.stationStatus ?? 'Not Connected';
-  const connectionStatus = deviceData?.socketStatus?.status ?? 'Disconnect';
+
+
   const formattedLastUpdated = useMemo(() => {
     if (!latestUtcTime) return '';
     return getUTCtoLocalSyatemDate(latestUtcTime);
   }, [latestUtcTime]);
 
-  const checkSocketStatus = () => {
-    if (!latestUtcTime) {
-      setSocketStatus((prev) => ({
-        ...prev,
-        colour: '-1',
-        remote: stationStatus,
-      }));
-      return;
-    }
-
-    const utcDate = new Date(latestUtcTime);
-    const utcTimestamp = utcDate.getTime();
-
-    if (Number.isNaN(utcTimestamp)) {
-      setSocketStatus((prev) => ({
-        ...prev,
-        colour: '-1',
-        remote: stationStatus,
-      }));
-      return;
-    }
-
-    const diff = Date.now() - utcTimestamp;
-
-    setSocketStatus((prev) => ({
-      ...prev,
-      colour: diff <= SOCKET_ACTIVE_THRESHOLD_MS ? '1' : '0',
-      remote: stationStatus,
-    }));
-  };
+  
 
   useEffect(() => {
     const updateTime = () => setTime(new Date());
@@ -79,15 +50,7 @@ const Card: React.FC = () => {
     };
   }, []);
 
-  /* useEffect(() => {
-    checkSocketStatus();
-    setSocketStatus((prev) => ({ ...prev, status: connectionStatus, remote: stationStatus }));
-    const interval = setInterval(() => {
-      checkSocketStatus();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [latestUtcTime, stationStatus, connectionStatus]); */
+ 
 
   useEffect(() => {
     console.log('📡 Socket Status Updated:', deviceData.socketStatus);
