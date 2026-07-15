@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend, Area, ComposedChart  } from 'recharts';
+import { ResponsiveContainer, Line, XAxis, YAxis, Tooltip, Legend, Area, ComposedChart  } from 'recharts';
 import type { RootState } from '../features/store';
 import { useSelector } from 'react-redux';
 export default function Graph() {
@@ -103,7 +103,7 @@ export default function Graph() {
               </span>
             )}
           />
-  {/* <Area
+ <Area
       type="monotone"
       dataKey="humidity"
       fill="url(#HumidityGradient)"
@@ -111,7 +111,7 @@ export default function Graph() {
       stroke="none"
         legendType="none"
         tooltipType="none"
-    /> */}
+    /> 
           <Line
             dataKey="humidity"
             stroke="#3B82F6"
@@ -133,7 +133,7 @@ export default function Graph() {
               strokeWidth: 1,
             }}
           />
- {/*    <Area
+    <Area
       type="monotone"
       dataKey="tempAHT"
       fill="url(#tempGradient)"
@@ -141,7 +141,7 @@ export default function Graph() {
       stroke="none"
         legendType="none"
         tooltipType="none"
-    /> */}
+    /> 
           <Line
             dataKey="tempAHT"
             type="monotone"
