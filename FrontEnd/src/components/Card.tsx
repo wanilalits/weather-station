@@ -143,11 +143,11 @@ else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving ra
         <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
         <div className="flex  justify-between  text-[11px] font-semibold">
-          <span className={`text-[15px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Client </span>
-          <span className="relative -top-[9.5px] text-white/45 text-[25px]">↔</span>
-          <span className={`text-[15px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Socket Server</span>
-          <span className="relative -top-[9.5px] text-white/45 text-[25px]">↔</span>
-          <span className={`text-[15px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}> Weather Station </span>
+          <span className={`text-[10px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Client </span>
+          <span className="relative -top-[9.5px] text-white/45 text-[20px]">↔</span>
+          <span className={`text-[10px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Socket Server</span>
+          <span className="relative -top-[9.5px] text-white/45 text-[20px]">↔</span>
+          <span className={`text-[10px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}> Weather Station </span>
         </div>
 
         <div className="-mt-3  text-xs text-white/65">
