@@ -2,11 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type {SensorData, APIRequest} from '../types/interface_1'
 
-
-
-
 const initialState: SensorData[] = []
-
 const deviceDataSlice = createSlice({ name: "DeviceData", initialState, reducers: {
    //                   output, input
    //deviceDataRequest: (state, action: PayloadAction<APIRequest>) => {
@@ -14,14 +10,10 @@ const deviceDataSlice = createSlice({ name: "DeviceData", initialState, reducers
 console.log (state, action)
     },
 
-
-
 deviceData: (state, action: PayloadAction<{ data: SensorData[] }>) => {
   //state.push(...action.payload.data);
 state.push(...action.payload.data.reverse());
 },
-
-
 
 clearDeviceData: () => {
      return [];

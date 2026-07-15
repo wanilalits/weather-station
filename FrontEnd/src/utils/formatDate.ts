@@ -49,8 +49,19 @@ export const getUTCStartDate = (range: string): string => {
       break;
       
   }
-console.log(start)
+
   return start.toISOString();
 
 };
 
+export const getUTCtoLocalSyatemDate = (date: string| any): string => {
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+   const localTime = new Date(date).toLocaleString(
+  "en-IN",
+  {
+    timeZone: systemTimeZone,
+  }
+);
+  return localTime
+
+};

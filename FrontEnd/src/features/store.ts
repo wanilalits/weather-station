@@ -3,7 +3,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "./saga";
-import deviceReducer from "./deviceSlice";
+import deviceReducer from "./WebsocketDataSlice";
 import authReducer from "./authSlice";
 import deviceDataReducer from './deviceDataSlice'
 import graphInfoReducer from './graphSlice'

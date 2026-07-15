@@ -11,6 +11,11 @@ const graphInfo = createSlice({ name: "graphInfo", initialState, reducers: {
       state.GraphType = action.payload.GraphType;
       state.range = action.payload.range;
       //go to saga to handle login
+    
+  
+
+
+    
     },
 
     

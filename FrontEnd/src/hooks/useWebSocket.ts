@@ -1,35 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-
+import {  websocketStatus} from "../features/WebsocketDataSlice";
 export const useWebSocket = () => {
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
   // WebSocket instance
   const wsRef = useRef<WebSocket | null>(null);
-
   // Reconnect timeout reference
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   // Last time data was received
   const lastMessageTimeRef = useRef<number>(Date.now());
-
   // Interval to check if data timeout occurred
-  const dataTimeoutIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null
-  );
-
+  const dataTimeoutIntervalRef = useRef<ReturnType<typeof setInterval> | null>( null );
   // Connection state
   const [isConnected, setIsConnected] = useState(false);
 
   // WebSocket server URL
   const WS_URL = "wss://weather-station-ch7x.onrender.com/";
     //const WS_URL = "ws://localhost:5000";
-//ws://localhost:5000
 
-  // -------------------------------------------------------
-  // Generate dummy data if socket is disconnected
-  // or no data received for 10 seconds
-  // -------------------------------------------------------
+  // Generate dummy data if socket is disconnected or no data received for 10 seconds
   const generateDummyData = () => {
     const dummyData = [{
       "deviceId":"1",
@@ -47,15 +37,11 @@ export const useWebSocket = () => {
 
     //console.log("🟡 Dummy Data Generated:", dummyData);
 
-    dispatch({
-      type: "SOCKET_DATA",
-      payload: dummyData,
-    });
+    dispatch({type: "SOCKET_DATA",payload: dummyData, });
+    dispatch( websocketStatus({ stationStatus: "Not Connected, receiving random data"}))
   };
-
-  // -------------------------------------------------------
+  
   // Start monitoring if no data received for 10 seconds
-  // -------------------------------------------------------
   const startDataMonitor = () => {
     // Clear old interval if any
     if (dataTimeoutIntervalRef.current) {
@@ -74,12 +60,10 @@ export const useWebSocket = () => {
         // Reset timer so dummy data isn't generated every second
         lastMessageTimeRef.current = Date.now();
       }
-    }, 1000); // check every second
+    }, 10000); // check every second
   };
 
-  // -------------------------------------------------------
   // Stop monitoring
-  // -------------------------------------------------------
   const stopDataMonitor = () => {
     if (dataTimeoutIntervalRef.current) {
       clearInterval(dataTimeoutIntervalRef.current);
@@ -87,30 +71,25 @@ export const useWebSocket = () => {
     }
   };
 
-  // -------------------------------------------------------
   // Connect WebSocket
-  // -------------------------------------------------------
   const connect = () => {
     // Prevent duplicate connections
-    if (
-      wsRef.current &&
-      (wsRef.current.readyState === WebSocket.OPEN ||
-        wsRef.current.readyState === WebSocket.CONNECTING)
-    ) {
-      return;
-    }
-
+    if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN ||  wsRef.current.readyState === WebSocket.CONNECTING)) 
+      { dispatch( websocketStatus({ status: "Connected",}));
+        return; }
     console.log("🔌 Connecting WebSocket...");
-
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
-
+dispatch( websocketStatus({ status: "Connecting...",}));
+  
     // Connection opened
     ws.onopen = () => {
       console.log("✅ WebSocket Connected");
-
+dispatch( websocketStatus({ status: "Connected",
+           connectedutcTime: new Date().toISOString(),
+  })
+);
       setIsConnected(true);
-
       // Reset last message time
       lastMessageTimeRef.current = Date.now();
 
@@ -127,14 +106,13 @@ export const useWebSocket = () => {
 
       try {
         const data = JSON.parse(event.data);
-
         // Update last message time
         lastMessageTimeRef.current = Date.now();
-
-        dispatch({
-          type: "SOCKET_DATA",
-          payload: data,
-        });
+       data[0].utcTime = new Date().toISOString();
+dispatch({ type: "SOCKET_DATA",   payload: data, });
+dispatch( websocketStatus({ stationStatus: "Connected and Sending Data"
+  })
+);
       } catch (err) {
         console.error("❌ JSON Parse Error:", err);
       }
@@ -148,38 +126,37 @@ export const useWebSocket = () => {
     // Connection closed
     ws.onclose = () => {
       console.log("🔴 WebSocket Disconnected");
-
+      dispatch( websocketStatus({ status: "Disconnected",
+           disconnectedutcTime: new Date().toISOString(),
+  })
+);
+   
       setIsConnected(false);
-
       // Stop timeout monitoring
       stopDataMonitor();
-
       // Show dummy data immediately
       generateDummyData();
-
       // Try reconnecting
       reconnect();
     };
   };
 
-  // -------------------------------------------------------
   // Reconnect after 3 seconds
-  // -------------------------------------------------------
   const reconnect = () => {
     if (reconnectTimeout.current) {
       clearTimeout(reconnectTimeout.current);
     }
 
     console.log("⏳ Reconnecting in 3 seconds...");
-
+dispatch( websocketStatus({ status: "Reconnecting....",
+           
+  }));
     reconnectTimeout.current = setTimeout(() => {
       connect();
     }, 3000);
   };
 
-  // -------------------------------------------------------
   // Disconnect manually
-  // -------------------------------------------------------
   const disconnect = () => {
     console.log("🛑 Manual Disconnect");
 
@@ -197,9 +174,7 @@ export const useWebSocket = () => {
     wsRef.current = null;
   };
 
-  // -------------------------------------------------------
   // Send initial message after connection
-  // -------------------------------------------------------
   const sendInitialMessage = () => {
     if (
       wsRef.current &&
@@ -213,28 +188,20 @@ export const useWebSocket = () => {
     }
   };
 
-  // -------------------------------------------------------
   // Send custom message
-  // -------------------------------------------------------
   const sendMessage = (msg: any) => {
-    if (
-      wsRef.current &&
-      wsRef.current.readyState === WebSocket.OPEN
-    ) {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)
+       {
       wsRef.current.send(JSON.stringify(msg));
-
       console.log("📤 Message sent:", msg);
     } else {
       console.warn("⚠️ WebSocket not connected");
     }
   };
 
-  // -------------------------------------------------------
   // Auto connect when hook mounts
-  // -------------------------------------------------------
   useEffect(() => {
     connect();
-
     return () => {
       disconnect();
     };
@@ -243,10 +210,5 @@ export const useWebSocket = () => {
   // -------------------------------------------------------
   // Return values
   // -------------------------------------------------------
-  return {
-    isConnected,
-    sendMessage,
-    connect,
-    disconnect,
-  };
+  return { isConnected,   sendMessage,   connect,   disconnect, };
 };

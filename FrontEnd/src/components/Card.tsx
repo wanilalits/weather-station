@@ -1,262 +1,250 @@
-import { useEffect, useRef, useState } from 'react';
-
-import temperatureIcon from '../assets/Images/temperature.svg';
-import humidityIcon from '../assets/Images/humidity.svg';
-//import batteryIcon from '../assets/Images/battery.svg';
-import airPressureIcon from '../assets/Images/airPressure.svg';
-import realFeeIcon from '../assets/Images/realFee.svg';
-import altitudeIcon from '../assets/Images/altitude.svg';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Droplets, Gauge } from 'lucide-react';
+import type { RootState } from '../features/store';
 import { useSelector } from 'react-redux';
+import { getUTCtoLocalSyatemDate } from '../utils/formatDate';
 
-export default function Card() {
- /*  type RootState = {
-    specificdevices: {
-      [key: string]: string | number | null;
-    }[];
-  }; */
+type SocketColour = '-1' | '0' | '1';
 
-  type DeviceData = {
-    deviceId: string;
-    humidity?: string;
-    mx?: string;
-    my?: string;
-    mz?: string;
-    pressure?: string;
-    tempAHT?: string;
-    tempBMP?: string;
-    // allow extra fields like battery
-    [key: string]: string | undefined;
-  };
+type SocketStatus = {
+  colour: SocketColour;
+  status: any;
+  remote: any;
+};
 
-  //const [data] = useState<RootState>({ specificdevices: [] });
-  //const [selected, setSelected] = useState<string>('');
-  const samplesRef = useRef<DeviceData[]>([]);
-  const lastValueRef = useRef<string | null>(null);
-  const devices = useSelector((state: any) => state.device.devices);
-  const [sensorValue] = useState<{ [key: string]: number }>({
-    Temperature: 10,
-    Humidity: 50,
-    'Air pressure': 540,
-    Altitude: 50,
-    'Real Feel': 10,
+const SOCKET_ACTIVE_THRESHOLD_MS = 5000;
+
+const Card: React.FC = () => {
+  const [time, setTime] = useState(new Date());
+  const [socketStatus, setSocketStatus] = useState<SocketStatus>({
+    colour: '-1',
+    status: 'Disconnect',
+    remote: 'Not Connected',
   });
-  const cardData = [
-    {
-      title: 'Temperature',
-      value: samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].tempAHT,
-      units: ['°C', '°F'],
-      Icon: temperatureIcon,
-       timestampFront :samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].timestampFront,
-    },
-    {
-      title: 'Real Feel',
-          timestampFront :samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].timestampFront,
-      
-      value:
-        samplesRef.current?.length &&
-        samplesRef.current[samplesRef.current.length - 1]?.tempAHT != null &&
-        samplesRef.current[samplesRef.current.length - 1]?.humidity != null
-          ? (() => {
-              const t = Number(samplesRef.current[samplesRef.current.length - 1].tempAHT);
-              const rh = Number(samplesRef.current[samplesRef.current.length - 1].humidity);
 
-              // 👉 If hot (Heat Index)
-              if (t >= 27 && rh >= 40) {
-                const T = (t * 9) / 5 + 32;
-                const HI =
-                  -42.379 +
-                  2.04901523 * T +
-                  10.14333127 * rh -
-                  0.22475541 * T * rh -
-                  0.00683783 * T * T -
-                  0.05481717 * rh * rh +
-                  0.00122874 * T * T * rh +
-                  0.00085282 * T * rh * rh -
-                  0.00000199 * T * T * rh * rh;
+  const deviceData = useSelector((state: RootState) => state.device);
 
-                return ((HI - 32) * 5) / 9;
-              }
+  const latestSample = deviceData?.devices1?.[1]?.at(-1);
+  const latestUtcTime = deviceData?.devices?.[1]?.[0]?.utcTime;
+  const stationStatus = deviceData?.socketStatus?.stationStatus ?? 'Not Connected';
+  const connectionStatus = deviceData?.socketStatus?.status ?? 'Disconnect';
+const isSocketConnected = deviceData?.socketStatus?.status ?? 'Disconnect';
+const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not Connected';
+  const formattedLastUpdated = useMemo(() => {
+    if (!latestUtcTime) return '';
+    return getUTCtoLocalSyatemDate(latestUtcTime);
+  }, [latestUtcTime]);
 
-              // 👉 If cold (Wind Chill approx, assuming light wind ~1.5 m/s)
-              if (t <= 10) {
-                const v = 5.4; // km/h (~1.5 m/s default)
-                return (
-                  13.12 + 0.6215 * t - 11.37 * Math.pow(v, 0.16) + 0.3965 * t * Math.pow(v, 0.16)
-                );
-              }
+  const checkSocketStatus = () => {
+    if (!latestUtcTime) {
+      setSocketStatus((prev) => ({
+        ...prev,
+        colour: '-1',
+        remote: stationStatus,
+      }));
+      return;
+    }
 
-              // 👉 Otherwise normal temp
-              return t;
-            })()
-          : 2,
-      units: ['°C', '°F'],
-      Icon: realFeeIcon,
-    },
-    {
-      title: 'Humidity',
-             timestampFront :samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].timestampFront,
-      value:
-        samplesRef.current?.length > 0 &&
-        samplesRef.current[samplesRef.current.length - 1].humidity,
-      units: ['%'],
-      Icon: humidityIcon,
-    },
-    {
-      title: 'Air pressure',
-             timestampFront :samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].timestampFront,
-      value:
-        samplesRef.current?.length > 0 &&
-        samplesRef.current[samplesRef.current.length - 1].pressure,
-      units: ['hPa', 'kPa'],
-      Icon: airPressureIcon,
-    },
-    {
-      title: 'Altitude',
-      timestampFront :samplesRef.current?.length > 0 && samplesRef.current[samplesRef.current.length - 1].timestampFront,
-      value:
-        samplesRef.current?.length &&
-        samplesRef.current[samplesRef.current.length - 1]?.pressure != null &&
-        samplesRef.current[samplesRef.current.length - 1]?.tempAHT != null
-          ? ((Number(samplesRef.current[samplesRef.current.length - 1].tempAHT) + 273.15) /
-              0.0065) *
-            (1 -
-              Math.pow(
-                Number(samplesRef.current[samplesRef.current.length - 1].pressure) / 1013.25,
-                0.1903
-              ))
-          : 3,
+    const utcDate = new Date(latestUtcTime);
+    const utcTimestamp = utcDate.getTime();
 
-      units: ['m', 'F'],
-      Icon: altitudeIcon,
-    },
-  ];
+    if (Number.isNaN(utcTimestamp)) {
+      setSocketStatus((prev) => ({
+        ...prev,
+        colour: '-1',
+        remote: stationStatus,
+      }));
+      return;
+    }
+
+    const diff = Date.now() - utcTimestamp;
+
+    setSocketStatus((prev) => ({
+      ...prev,
+      colour: diff <= SOCKET_ACTIVE_THRESHOLD_MS ? '1' : '0',
+      remote: stationStatus,
+    }));
+  };
 
   useEffect(() => {
-    const newData = devices['1']?.[0];
-   // console.log (newData)
-    if (!newData) return;
-    const uniqueKey = JSON.stringify(newData);
-    // 🚫 skip duplicate
-    if (lastValueRef.current === uniqueKey) return;
-    lastValueRef.current = uniqueKey;
-    addSample(newData);
-  }, [devices]);
+    const updateTime = () => setTime(new Date());
 
-  function addSample(newData: DeviceData) {
-    samplesRef.current.push(newData);
+    updateTime();
 
-    if (samplesRef.current.length > 15) {
-      samplesRef.current.shift();
-    }
- //console.log(samplesRef.current[samplesRef.current.length - 1].timestampFront);
-  }
+    const now = new Date();
+    const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-  const [convertedValues, setConvertedValues] = useState<{
-    [key: string]: any;
-  }>({});
-  //const [id, setID] = useState<number | null>(null);
+    let interval: ReturnType<typeof setInterval> | undefined;
 
-  const unitFormat = (id: number, parameter: string) => {
-    if (id === 0) {
-      setConvertedValues((prev) => {
-        console.log(id);
-        const { [parameter]: _, ...rest } = prev;
-        return rest;
-      });
-    }
+    const timeout = setTimeout(() => {
+      updateTime();
+      interval = setInterval(updateTime, 60000);
+    }, delay);
 
-    if (id === 1) {
-      setConvertedValues((prev) => ({
-        ...prev,
-        [parameter]: true,
-      }));
-    }
-  };
+    return () => {
+      clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
+  }, []);
 
-  const myConvertion = (title: string) => {
-    if (title === 'Temperature' || title === 'Real Feel') {
-      return (Number(sensorValue[title]) * 9) / 5 + 32;
-    } else {
-      return null;
-    }
-  };
+  useEffect(() => {
+    checkSocketStatus();
 
-  const formatNumber = (num: number | string | false | undefined): number | string => {
-    if (num === false || num === undefined) {
-      return '';
-    }
-    const truncated = Math.floor(Number(num) * 10) / 10;
-    return Number.isInteger(truncated) ? truncated : truncated.toString();
-  };
+    setSocketStatus((prev) => ({
+      ...prev,
+      status: connectionStatus,
+      remote: stationStatus,
+    }));
+
+    const interval = setInterval(() => {
+      checkSocketStatus();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [latestUtcTime, stationStatus, connectionStatus]);
+
+  const statusStyles =
+    socketStatus.colour === '1'
+      ? 'bg-emerald-400 shadow-emerald-400/40'
+      : socketStatus.colour === '0'
+        ? 'bg-slate-200 shadow-slate-200/30'
+        : 'bg-rose-500 shadow-rose-500/40';
+
+  const statusLabel =
+    socketStatus.colour === '1'
+      ? 'Live'
+      : socketStatus.colour === '0'
+        ? 'Idle'
+        : 'Offline';
 
   return (
-    <>
-      {/* Cards */}
+    <div className="w-full max-w-[380px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#02627e] via-[#007498] to-[#0492a7] p-5 text-white shadow-xl ring-1 ring-white/15">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-medium uppercase tracking-wide text-white/70">
+            India, Maharashtra
+          </p>
+          <p className="mt-1 text-sm text-white/80">
+            {time.toLocaleString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+            })}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-medium text-white/90 ring-1 ring-white/15">
+          <span
+            className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`}
+          />
+          <span>{statusLabel}</span>
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center gap-4">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center  bg-white/12 text-5xl ">
+          🌤️
+        </div>
+
+        <div className="min-w-0">
+          <p className="text-lg font-medium text-white/95">
+            Current Temperature
+          </p>
+
+    <div className="mt-1 flex items-end">
+  <span className="text-5xl font-semibold leading-none tabular-nums">
+    {String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[0]}.
+  </span>
+
+  <span className="text-3xl font-semibold leading-none text-white/70 tabular-nums">
+    {String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[1]}
+  </span>
+
+  <div className="ml-1 flex flex-col self-start leading-none">
+    <span className="text-2xl font-semibold">°C</span>
+  </div>
+</div>
+        </div>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-3">
+        <div className="rounded-xl bg-white/12 p-3 ring-1 ring-white/15">
+          <p className="text-xs font-medium text-white/65">Humidity</p>
+          <p className="mt-2 flex items-center gap-2 text-lg font-semibold">
+            <Droplets size={18} className="shrink-0 text-cyan-100" />
+            <span className="tabular-nums">
+              {latestSample?.humidity ?? 48}
+            </span>
+            <span className="text-sm text-white/70">%</span>
+          </p>
+        </div>
+
+        <div className="rounded-xl bg-white/12 p-2 ring-1 ring-white/15">
+          <p className="text-xs font-medium text-white/65">Air Pressure</p>
+          <p className="mt-2 flex items-center gap-2 text-lg font-semibold">
+            <Gauge size={18} className="shrink-0 text-cyan-100" />
+            <span className="tabular-nums">
+              {latestSample?.pressure ?? 824}
+            </span>
+            <span className="text-sm text-white/70">hPa</span>
+          </p>
+        </div>
+      </div>
 
       
 
-      <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5  gap-4 py-4">
-        {cardData.map((card, i) => {
-          // const Icon = card.Icon;
-          return (
-            <div key={i} className="bg-white p-2 rounded-xl shadow h-24 ">
-              {/*Card Title*/} {/* UNITS CONTAINER */}
-              <div className="flex items-center text-sm w-full justify-between text-black">
-                <div className="flex items-center gap-2">
-                  <img src={card.Icon} className="w-5 h-5" /> {card.title}
-                </div>
-                <div className="flex items-center gap-0">
-                  {' '}
-                  {/* 👈 smaller gap */}
-                  {card.units.map((unit, i) => {
-                    return (
-                      <>
-                        <span
-                          className={`ml-auto cursor-pointer  ${
-                            convertedValues[card.title] && i == 1
-                              ? 'text-black font-bold cursor-auto'
-                              : !convertedValues[card.title] && i == 0
-                                ? 'text-black font-bold cursor-auto'
-                                : ''
-                          }`}
-                          onClick={() => {
-                            unitFormat(i, card.title);
-                          }}
-                        >
-                          {unit}
-                        </span>
-                        {/* Divider (avoid after last item) */}
-                        {i !== card.units.length - 1 && (
-                          <span className="mx-2 h-4 border-l border-gray-400"></span>
-                        )}
-                      </>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* VALUE */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-semibold ">
-                  {' '}
-                  {convertedValues[card.title] ? (
-                    <> {myConvertion(card.title)} </>
-                  ) : (
-                    <>{formatNumber(card.value)}</>
-                  )}
-                </h2>
+<div className="mt-2 border-t border-white/15 pt-0">
+  <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
-   <div
-className="flex-1 h-[50px] ">
-  
-        </div>
+  <div className="flex items-center justify-between gap-2 text-[11px] font-semibold">
+    <span
+      className={
+        isSocketConnected
+          ? 'text-emerald-300'
+          : 'text-rose-300'
+      }
+    >
+      Client
+    </span>
 
-                 
-              </div>
+    <span className="text-white/45">↔</span>
 
-            </div>
-          );
-        })}
-      </div>
-    </>
+    <span
+      className={
+        isSocketConnected
+          ? 'text-emerald-300'
+          : 'text-rose-300'
+      }
+    >
+      Socket Server
+    </span>
+
+    <span className="text-white/45">↔</span>
+
+    <span
+      className={
+        isWeatherStationConnected
+          ? 'text-emerald-300'
+          : 'text-rose-300'
+      }
+    >
+      Weather Station
+    </span>
+  </div>
+
+  <div className="mt-1 space-y-1 text-xs text-white/65">
+     <p>Socket Status: {socketStatus.status}</p>
+        <p>Remote Weather Station: {socketStatus.remote}</p>
+    <p>Last Updated at {formattedLastUpdated ?? ""}</p>
+  </div>
+</div>
+
+    </div>
   );
-}
+};
+
+export default Card;
+

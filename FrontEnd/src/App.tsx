@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {BrowserRouter, Routes,  Route, Navigate } from "react-router-dom";
 import WeatherDashboard from './pages/WeatherDashboard'
@@ -17,11 +15,11 @@ const App: React.FC = () => {
       try {
     const loginToken = localStorage.getItem("loginToken");
       if (!loginToken) {
+        console.log("not found")
         setAuthStatus("unauthenticated");
         return;
       }
 await tokenVerification({loginToken});
-  
 setAuthStatus("authenticated");
       
       } 
@@ -32,6 +30,7 @@ setAuthStatus("authenticated");
       }
     };
     checkAuth();
+    
   }, []);
 
   if (authStatus === "checking") {

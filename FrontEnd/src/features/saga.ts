@@ -1,8 +1,8 @@
 import { takeEvery,  delay, fork, call, put, takeLatest } from "redux-saga/effects";
-import { updateDevice, updateDevicesamples } from "./deviceSlice";
+import { updateDevice, updateDevicesamples } from "./WebsocketDataSlice";
 import { loginApi } from "../services/authService";
 import { deviceDataAPI } from "../services/deviceDataService";
-import {deviceDataRequest, deviceData} from "./deviceDataSlice";
+import {deviceDataRequest, deviceData, } from "./deviceDataSlice";
 import { loginFailure, loginRequest, loginSuccess } from "./authSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -14,14 +14,17 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 // 👉 Worker saga
 function* handleSocketData(action: any): any {
  //console.log("📩 [SAGA] Action received:", action);
-  try {
-    const data = action.payload;
 
+ try {
+    const data = action.payload;
+//console.log("Status", action.status);
 //console.log("📦 [SAGA] Processing data:", data);
   //👉 इथे आपण WebSocket कडून आलेला data process करू शकतो validation, transformation, filtering वगैरे करू शकतो
     // 👉 Store in Redux
     yield put(updateDevice(data));
     yield put(updateDevicesamples(data));
+    
+    
     
     //console.log("✅ [SAGA] Data sent to reducer");
   } catch (error) {
@@ -29,9 +32,8 @@ function* handleSocketData(action: any): any {
   }
 }
 // 👉 Watcher saga
-function* watchSocket() {
-  // 👉 
-  // SOCKET_DATA action आला की handleSocketData चालेल
+function* watchSocket() {  
+  // 👉 SOCKET_DATA action आला की handleSocketData चालेल
   yield takeEvery("SOCKET_DATA", handleSocketData);
 }
 

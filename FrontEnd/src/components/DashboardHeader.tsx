@@ -13,20 +13,12 @@ export default function DashboardHeader() {
     <div>
      <div className="flex justify-between items-center mb-6">
   <h1 className="text-2xl font-semibold">Weather Today</h1>
-
   <div className="flex items-center gap-4">
-    <input
-      placeholder="Search"
-      className="px-4 py-2 rounded-lg border"
-    />
-
+    <input  placeholder="Search"  className="px-4 py-2 rounded-lg border"/>
  {/* 👤 User */}
     <div className="w-6 h-6 rounded-full border flex items-center justify-center overflow-hidden bg-gray-200">
       <img src={userIcon} className="w-full h-full object-cover" />
     </div>
-
-
-
     {/* 🔔 Notification */}
     <div className="relative">
       <img src={notificationIcon} className="w-6 h-6 cursor-pointer" />
@@ -34,19 +26,9 @@ export default function DashboardHeader() {
         5
       </span>
     </div>
-
- 
   </div>
- 
 </div>
-<div style={{display: "inline-block",
-  padding: "6px 12px",
-  borderRadius: "8px",
-  background: "#f5f7fa",
-  fontSize: "12px",
-  color: "#555",
-  border: "1px solid #e0e0e0"
-}}>
+<div style={{display: "inline-block",padding: "6px 12px",borderRadius: "8px",background: "#f5f7fa",fontSize: "12px",color: "#555",border: "1px solid #e0e0e0"}}>
   ⏱ Last updated: {time}
 </div>
 </div>

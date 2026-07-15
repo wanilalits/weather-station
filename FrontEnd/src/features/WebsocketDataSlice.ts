@@ -1,20 +1,26 @@
 // features/deviceSlice.ts
+
 import { createSlice } from "@reduxjs/toolkit";        // ✅ value
 import type { PayloadAction } from "@reduxjs/toolkit"; // ✅ type
+
+
 // 👉 Device data type (तुमचा sensor structure)
 
 
 
 type DeviceData = {deviceId: string | null ;[key: string]: string | number | null;};
+type socketStatus ={status :string | null;[key: string]: string | null }
 type DeviceState = {
   devices: Record<string, DeviceData[]>; // key = deviceId → latest data (फक्त latest record ठेवतो)
   devices1: Record<string, DeviceData[]>;  // last 20 samples
+socketStatus: Record<string, socketStatus >;  // last 20 samples
 };
 
 
 const initialState: DeviceState = {
-  devices: {},
-   devices1: {},   // ✅ for 20 samples
+devices: {},
+devices1: {},   // ✅ for 300 samples
+socketStatus:{}
 };
 
 const deviceSlice = createSlice({
@@ -24,7 +30,8 @@ const deviceSlice = createSlice({
     // ✅ Store latest data per device
    
 updateDevice(state, action: PayloadAction<DeviceData[]>) {
-       const dataWithTime = action.payload.map(item => ({
+   
+  const dataWithTime = action.payload.map(item => ({
     ...item,
     timestampFront: new Date().toISOString(), // 🔥 unique + precise
   }));
@@ -50,10 +57,7 @@ const id = data.deviceId;
     state.devices1[id] = [];
   }
 
-  const sampleWithTime = {
-    ...data,
-    time: data.time ?? new Date().toISOString(),
-  };
+  const sampleWithTime = { ...data, time: data.time ?? new Date().toISOString(),};
 
   // 2. push new sample
   state.devices1[id].push(sampleWithTime);
@@ -61,7 +65,16 @@ const id = data.deviceId;
   if (state.devices1[id].length > 300) {
     state.devices1[id].shift();
   }
- 
+},
+
+websocketStatus: (state, action )=>{
+
+  const data = action.payload;
+   //console.log(data)
+ if (data) {
+ state.socketStatus=data
+} 
+
 },
     // Optional: clear all data
 clearDevices(state) {
@@ -70,5 +83,5 @@ clearDevices(state) {
   },
 });
 
-export const { updateDevice, clearDevices, updateDevicesamples } = deviceSlice.actions;
+export const { updateDevice, clearDevices, updateDevicesamples, websocketStatus } = deviceSlice.actions;
 export default deviceSlice.reducer;

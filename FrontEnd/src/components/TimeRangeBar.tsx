@@ -11,18 +11,15 @@ let startdate:string, enddate:string
 const getInitialData = () => {dispatch(deviceDataRequest({deviceid: "1", startdate, enddate,limit: 100, authToken:  localStorage.getItem("loginToken")|| "not available" }));};
 const clearData = ()=>{dispatch(clearDeviceData());}
 const graphMode = () => {dispatch(graphinfo({GraphType: "line", range: range}));};  
+
 useEffect(() => {
 clearData()
 startdate =  getUTCStartDate(range)
-console.log(startdate)
+//console.log(startdate)
 enddate = now.toISOString();
  getInitialData()
  graphMode()
 },[range]);
-
-
-
-
 
 return (
     <div className="p-1">
@@ -33,8 +30,10 @@ return (
     <> 
     {_id ===0 ? null : <>|</>} 
     <button key={item}  onClick={() => setRange(item)} 
-    className={`px-3 py-1 rounded-lg text-sm font-medium 
-    transition${range === item? " text-blue-600  hover:bg-gray-200 font-semibold" : "text-gray-100  hover:bg-gray-200 font-light "  }`}>
+    className={`px-3 py-1 rounded-lg text-sm transition ${
+      range === item?
+       "text-[#007498] font-semibold hover:bg-gray-200 " 
+      : "text-gray-700  font-light  hover:bg-gray-200 "  }`}>
       {item.charAt(0).toUpperCase() + item.slice(1)}
     </button> </>
   ))}
