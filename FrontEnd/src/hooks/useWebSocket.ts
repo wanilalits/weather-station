@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import {  websocketStatus} from "../features/WebsocketDataSlice";
 export const useWebSocket = () => {
-
+const manualDisconnectRef = useRef(false);
   const dispatch = useDispatch();
   // WebSocket instance
   const wsRef = useRef<WebSocket | null>(null);
@@ -75,7 +75,8 @@ export const useWebSocket = () => {
   const connect = () => {
     // Prevent duplicate connections
     if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN ||  wsRef.current.readyState === WebSocket.CONNECTING)) 
-      { dispatch( websocketStatus({ status: "Connected",}));
+      { console.log("...");
+        dispatch( websocketStatus({ status: "Connected",}));
         return; }
     console.log("🔌 Connecting WebSocket...");
     const ws = new WebSocket(WS_URL);
@@ -85,9 +86,7 @@ dispatch( websocketStatus({ status: "Connecting...",}));
     // Connection opened
     ws.onopen = () => {
       console.log("✅ WebSocket Connected");
-dispatch( websocketStatus({ status: "Connected",
-           connectedutcTime: new Date().toISOString(),
-  })
+dispatch( websocketStatus({ status: "Connected" })
 );
       setIsConnected(true);
       // Reset last message time
@@ -124,55 +123,83 @@ dispatch( websocketStatus({ stationStatus: "Connected and Sending Data"
     };
 
     // Connection closed
-    ws.onclose = () => {
-      console.log("🔴 WebSocket Disconnected");
-      dispatch( websocketStatus({ status: "Disconnected",
-           disconnectedutcTime: new Date().toISOString(),
-  })
-);
-   
-      setIsConnected(false);
-      // Stop timeout monitoring
-      stopDataMonitor();
-      // Show dummy data immediately
-      generateDummyData();
-      // Try reconnecting
-      reconnect();
-    };
+   ws.onclose = (event) => {
+  console.log("🔴 WebSocket Closed", event.code, event.reason);
+
+  setIsConnected(false);
+  stopDataMonitor();
+  generateDummyData();
+
+  if (manualDisconnectRef.current) {
+    return;
+  }
+
+  if (!navigator.onLine) {
+    dispatch(
+      websocketStatus({
+        status: "Offline",
+      })
+    );
+  } else {
+    dispatch(
+      websocketStatus({
+        status: "Disconnected",
+      })
+    );
+    reconnect();
+  }
+};
   };
 
   // Reconnect after 3 seconds
-  const reconnect = () => {
-    if (reconnectTimeout.current) {
-      clearTimeout(reconnectTimeout.current);
-    }
+ const reconnect = () => {
+  if (manualDisconnectRef.current) return;
 
-    console.log("⏳ Reconnecting in 3 seconds...");
-dispatch( websocketStatus({ status: "Reconnecting....",
-           
-  }));
-    reconnectTimeout.current = setTimeout(() => {
-      connect();
-    }, 3000);
-  };
+  if (!navigator.onLine) {
+    console.log("📴 Internet is offline. Waiting...");
+    dispatch(
+      websocketStatus({
+        status: "Offline",
+      })
+    );
+    return;
+  }
+
+  if (reconnectTimeout.current) {
+    clearTimeout(reconnectTimeout.current);
+  }
+
+  dispatch(
+    websocketStatus({
+      status: "Reconnecting...",
+    })
+  );
+
+  reconnectTimeout.current = setTimeout(connect, 3000);
+};
 
   // Disconnect manually
-  const disconnect = () => {
-    console.log("🛑 Manual Disconnect");
+const disconnect = () => {
+  console.log("🛑 Manual Disconnect");
 
-    // Stop reconnect
-    if (reconnectTimeout.current) {
-      clearTimeout(reconnectTimeout.current);
-      reconnectTimeout.current = null;
-    }
+  manualDisconnectRef.current = true;
 
-    // Stop data monitor
-    stopDataMonitor();
+  if (reconnectTimeout.current) {
+    clearTimeout(reconnectTimeout.current);
+    reconnectTimeout.current = null;
+  }
 
-    // Close socket
-    wsRef.current?.close();
-    wsRef.current = null;
-  };
+  stopDataMonitor();
+
+  wsRef.current?.close();
+  wsRef.current = null;
+
+  dispatch(
+    websocketStatus({
+      status: "Disconnected",
+    })
+  );
+};
 
   // Send initial message after connection
   const sendInitialMessage = () => {
@@ -200,12 +227,44 @@ dispatch( websocketStatus({ status: "Reconnecting....",
   };
 
   // Auto connect when hook mounts
-  useEffect(() => {
+useEffect(() => {
+  const handleOffline = () => {
+    console.log("📴 Internet Offline");
+
+    dispatch(
+      websocketStatus({
+        status: "Offline",
+      })
+    );
+
+    wsRef.current?.close();
+  };
+
+  const handleOnline = () => {
+    console.log("🌐 Internet Online");
+
+    dispatch(
+      websocketStatus({
+        status: "Connecting...",
+      })
+    );
+
+    manualDisconnectRef.current = false;
     connect();
-    return () => {
-      disconnect();
-    };
-  }, []);
+  };
+
+  window.addEventListener("offline", handleOffline);
+  window.addEventListener("online", handleOnline);
+
+  connect();
+
+  return () => {
+    window.removeEventListener("offline", handleOffline);
+    window.removeEventListener("online", handleOnline);
+
+    disconnect();
+  };
+}, []);
 
   // -------------------------------------------------------
   // Return values

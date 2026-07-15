@@ -5,13 +5,11 @@ import { useSelector } from 'react-redux';
 import { getUTCtoLocalSyatemDate } from '../utils/formatDate';
 
 type SocketColour = '-1' | '0' | '1';
-
 type SocketStatus = {
   colour: SocketColour;
   status: any;
   remote: any;
 };
-
 const SOCKET_ACTIVE_THRESHOLD_MS = 5000;
 
 const Card: React.FC = () => {
@@ -19,7 +17,7 @@ const Card: React.FC = () => {
   const [socketStatus, setSocketStatus] = useState<SocketStatus>({
     colour: '-1',
     status: 'Disconnect',
-    remote: 'Not Connected',
+    remote: 'stationStatus Not Connected, receiving random data',
   });
 
   const deviceData = useSelector((state: RootState) => state.device);
@@ -28,8 +26,6 @@ const Card: React.FC = () => {
   const latestUtcTime = deviceData?.devices?.[1]?.[0]?.utcTime;
   const stationStatus = deviceData?.socketStatus?.stationStatus ?? 'Not Connected';
   const connectionStatus = deviceData?.socketStatus?.status ?? 'Disconnect';
-const isSocketConnected = deviceData?.socketStatus?.status ?? 'Disconnect';
-const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not Connected';
   const formattedLastUpdated = useMemo(() => {
     if (!latestUtcTime) return '';
     return getUTCtoLocalSyatemDate(latestUtcTime);
@@ -68,14 +64,10 @@ const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not
 
   useEffect(() => {
     const updateTime = () => setTime(new Date());
-
     updateTime();
-
     const now = new Date();
     const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
-
     let interval: ReturnType<typeof setInterval> | undefined;
-
     const timeout = setTimeout(() => {
       updateTime();
       interval = setInterval(updateTime, 60000);
@@ -87,43 +79,47 @@ const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not
     };
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     checkSocketStatus();
-
-    setSocketStatus((prev) => ({
-      ...prev,
-      status: connectionStatus,
-      remote: stationStatus,
-    }));
-
+    setSocketStatus((prev) => ({ ...prev, status: connectionStatus, remote: stationStatus }));
     const interval = setInterval(() => {
       checkSocketStatus();
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [latestUtcTime, stationStatus, connectionStatus]);
+  }, [latestUtcTime, stationStatus, connectionStatus]); */
 
-  const statusStyles =
-    socketStatus.colour === '1'
-      ? 'bg-emerald-400 shadow-emerald-400/40'
-      : socketStatus.colour === '0'
-        ? 'bg-slate-200 shadow-slate-200/30'
-        : 'bg-rose-500 shadow-rose-500/40';
+  useEffect(() => {
+    console.log('📡 Socket Status Updated:', deviceData.socketStatus);
+     
+   
+if( deviceData.socketStatus?.stationStatus === "Connected and Sending Data"  && deviceData.socketStatus?.status === "Connected"  ) 
+  {setSocketStatus((prev) => ({ ...prev, colour:"1", status: deviceData.socketStatus.status, remote: deviceData.socketStatus.stationStatus }));}
+ 
+  else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving random data" && (deviceData.socketStatus?.status === "Offline" || deviceData.socketStatus?.status === "Disconnected")) { //Offline, Disconnected
+  setSocketStatus((prev) => ({ ...prev, colour:"-1", status: deviceData.socketStatus.status, remote: deviceData.socketStatus.stationStatus }));
+ }   
+else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving random data" && deviceData.socketStatus?.status === "Connected" ) {
+  setSocketStatus((prev) => ({ ...prev, colour:"0", status: deviceData.socketStatus.status, remote: deviceData.socketStatus.stationStatus }));
+ }  
 
-  const statusLabel =
-    socketStatus.colour === '1'
-      ? 'Live'
-      : socketStatus.colour === '0'
-        ? 'Idle'
-        : 'Offline';
+ else 
+ {
+    setSocketStatus((prev) => ({ ...prev, status: deviceData.socketStatus.status, remote: deviceData.socketStatus.stationStatus }));
+ }
+  }, [deviceData]);
+
+  const statusStyles = socketStatus.colour === '1' ? 'bg-emerald-400 shadow-emerald-400/40' : 
+  socketStatus.colour === '0' ? 'bg-slate-200 shadow-slate-200/30' : 
+  'bg-rose-500 shadow-rose-500/40';
+
+  const statusLabel = socketStatus.colour === '1' ? 'Live' : socketStatus.colour === '0' ? 'Idle' : 'Offline';
 
   return (
     <div className="w-full max-w-[380px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#02627e] via-[#007498] to-[#0492a7] p-5 text-white shadow-xl ring-1 ring-white/15">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-sm font-medium uppercase tracking-wide text-white/70">
-            India, Maharashtra
-          </p>
+          <p className="text-sm font-medium uppercase tracking-wide text-white/70">India, Maharashtra</p>
           <p className="mt-1 text-sm text-white/80">
             {time.toLocaleString('en-IN', {
               day: '2-digit',
@@ -137,36 +133,26 @@ const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not
         </div>
 
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-medium text-white/90 ring-1 ring-white/15">
-          <span
-            className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`}
-          />
+          <span className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`} />
           <span>{statusLabel}</span>
         </div>
       </div>
 
       <div className="mt-6 flex items-center gap-4">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center  bg-white/12 text-5xl ">
-          🌤️
-        </div>
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center  bg-white/12 text-5xl ">🌤️</div>
 
         <div className="min-w-0">
-          <p className="text-lg font-medium text-white/95">
-            Current Temperature
-          </p>
+          <p className="text-lg font-medium text-white/95">Current Temperature</p>
 
-    <div className="mt-1 flex items-end">
-  <span className="text-5xl font-semibold leading-none tabular-nums">
-    {String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[0]}.
-  </span>
+          <div className="mt-1 flex items-end">
+            <span className="text-5xl font-semibold leading-none tabular-nums">{String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[0]}.</span>
 
-  <span className="text-3xl font-semibold leading-none text-white/70 tabular-nums">
-    {String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[1]}
-  </span>
+            <span className="text-3xl font-semibold leading-none text-white/70 tabular-nums">{String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[1]}</span>
 
-  <div className="ml-1 flex flex-col self-start leading-none">
-    <span className="text-2xl font-semibold">°C</span>
-  </div>
-</div>
+            <div className="ml-1 flex flex-col self-start leading-none">
+              <span className="text-2xl font-semibold">°C</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -175,9 +161,7 @@ const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not
           <p className="text-xs font-medium text-white/65">Humidity</p>
           <p className="mt-2 flex items-center gap-2 text-lg font-semibold">
             <Droplets size={18} className="shrink-0 text-cyan-100" />
-            <span className="tabular-nums">
-              {latestSample?.humidity ?? 48}
-            </span>
+            <span className="tabular-nums">{latestSample?.humidity ?? 48}</span>
             <span className="text-sm text-white/70">%</span>
           </p>
         </div>
@@ -186,65 +170,30 @@ const isWeatherStationConnected =deviceData?.socketStatus?.stationStatus ?? 'Not
           <p className="text-xs font-medium text-white/65">Air Pressure</p>
           <p className="mt-2 flex items-center gap-2 text-lg font-semibold">
             <Gauge size={18} className="shrink-0 text-cyan-100" />
-            <span className="tabular-nums">
-              {latestSample?.pressure ?? 824}
-            </span>
+            <span className="tabular-nums">{latestSample?.pressure ?? 824}</span>
             <span className="text-sm text-white/70">hPa</span>
           </p>
         </div>
       </div>
 
-      
+      <div className="mt-2 border-t border-white/15 pt-0">
+        <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
-<div className="mt-2 border-t border-white/15 pt-0">
-  <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
+        <div className="flex  justify-between  text-[11px] font-semibold">
+          <span className={`text-[15px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Client </span>
+          <span className="relative -top-[9.5px] text-white/45 text-[25px]">↔</span>
+          <span className={`text-[15px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Socket Server</span>
+          <span className="relative -top-[9.5px] text-white/45 text-[25px]">↔</span>
+          <span className={`text-[15px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}> Weather Station </span>
+        </div>
 
-  <div className="flex items-center justify-between gap-2 text-[11px] font-semibold">
-    <span
-      className={
-        isSocketConnected
-          ? 'text-emerald-300'
-          : 'text-rose-300'
-      }
-    >
-      Client
-    </span>
-
-    <span className="text-white/45">↔</span>
-
-    <span
-      className={
-        isSocketConnected
-          ? 'text-emerald-300'
-          : 'text-rose-300'
-      }
-    >
-      Socket Server
-    </span>
-
-    <span className="text-white/45">↔</span>
-
-    <span
-      className={
-        isWeatherStationConnected
-          ? 'text-emerald-300'
-          : 'text-rose-300'
-      }
-    >
-      Weather Station
-    </span>
-  </div>
-
-  <div className="mt-1 space-y-1 text-xs text-white/65">
-     <p>Socket Status: {socketStatus.status}</p>
-        <p>Remote Weather Station: {socketStatus.remote}</p>
-    <p>Last Updated at {formattedLastUpdated ?? ""}</p>
-  </div>
-</div>
-
+        <div className="-mt-3  text-xs text-white/65">
+          <p>Last Updated at {formattedLastUpdated ?? ''}</p>
+          <p>Remote Weather Station: {socketStatus.remote}</p>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Card;
-

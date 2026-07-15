@@ -9,11 +9,11 @@ import type { PayloadAction } from "@reduxjs/toolkit"; // ✅ type
 
 
 type DeviceData = {deviceId: string | null ;[key: string]: string | number | null;};
-type socketStatus ={status :string | null;[key: string]: string | null }
+type socketStatus ={[key: string]: any }
 type DeviceState = {
   devices: Record<string, DeviceData[]>; // key = deviceId → latest data (फक्त latest record ठेवतो)
   devices1: Record<string, DeviceData[]>;  // last 20 samples
-socketStatus: Record<string, socketStatus >;  // last 20 samples
+socketStatus: socketStatus;  // last 20 samples
 };
 
 
@@ -70,9 +70,12 @@ const id = data.deviceId;
 websocketStatus: (state, action )=>{
 
   const data = action.payload;
-   //console.log(data)
+ 
  if (data) {
- state.socketStatus=data
+ state.socketStatus = {
+  ...state.socketStatus,
+  ...data,
+};
 } 
 
 },
