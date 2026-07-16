@@ -75,10 +75,10 @@ const manualDisconnectRef = useRef(false);
   const connect = () => {
     // Prevent duplicate connections
     if (wsRef.current && (wsRef.current.readyState === WebSocket.OPEN ||  wsRef.current.readyState === WebSocket.CONNECTING)) 
-      { console.log("...");
+      { 
         dispatch( websocketStatus({ status: "Connected",}));
         return; }
-    console.log("🔌 Connecting WebSocket...");
+    //console.log("🔌 Connecting WebSocket...");
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 dispatch( websocketStatus({ status: "Connecting...",}));
@@ -101,17 +101,19 @@ dispatch( websocketStatus({ status: "Connected" })
 
     // Message received
     ws.onmessage = (event) => {
-     // console.log("📩 Raw message:", event.data);
+     //console.log("📩 Raw message:", event.data);
 
       try {
         const data = JSON.parse(event.data);
+       
         // Update last message time
         lastMessageTimeRef.current = Date.now();
        data[0].utcTime = new Date().toISOString();
+
 dispatch({ type: "SOCKET_DATA",   payload: data, });
-dispatch( websocketStatus({ stationStatus: "Connected and Sending Data"
-  })
-);
+
+ {data[0].deviceId !==null && data[0].deviceId !=="frontend" && dispatch( websocketStatus({ stationStatus: "Connected and Sending Data" }));}
+
       } catch (err) {
         console.error("❌ JSON Parse Error:", err);
       }

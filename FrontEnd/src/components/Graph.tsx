@@ -58,9 +58,6 @@ export default function Graph() {
         <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.05} />
       </linearGradient>
     </defs>
-        
-        
-        
           <XAxis
             dataKey="time"
             type="number"
@@ -76,7 +73,6 @@ export default function Graph() {
               })
             }
           />
-
           <YAxis domain={['dataMin - 1', 'dataMax + 1']} tickFormatter={(value) => Number(value).toFixed(2)} />
 
           <Tooltip

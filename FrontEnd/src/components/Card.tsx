@@ -53,7 +53,7 @@ const Card: React.FC = () => {
  
 
   useEffect(() => {
-    console.log('📡 Socket Status Updated:', deviceData.socketStatus);
+  ///  console.log('📡 Socket Status Updated:', deviceData.socketStatus);
      
    
 if( deviceData.socketStatus?.stationStatus === "Connected and Sending Data"  && deviceData.socketStatus?.status === "Connected"  ) 
@@ -112,8 +112,8 @@ else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving ra
 
             <span className="text-3xl font-semibold leading-none text-white/70 tabular-nums">{String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[1]}</span>
 
-            <div className="ml-1 flex flex-col self-start leading-none">
-              <span className="text-2xl font-semibold">°C</span>
+            <div className="ml-0 flex flex-col self-start leading-none">
+              <span className="text-4xl font-semibold">°C</span>
             </div>
           </div>
         </div>
@@ -142,15 +142,15 @@ else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving ra
       <div className="mt-2 border-t border-white/15 pt-0">
         <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
-        <div className="flex  justify-between  text-[11px] font-semibold">
-          <span className={`text-[10px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Client </span>
-          <span className="relative -top-[9.5px] text-white/45 text-[20px]">↔</span>
-          <span className={`text-[10px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}> Socket Server</span>
-          <span className="relative -top-[9.5px] text-white/45 text-[20px]">↔</span>
-          <span className={`text-[10px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}> Weather Station </span>
+        <div className="flex items-center   font-semibold  whitespace-nowrap align-middle -mt-2 justify-between">
+          <span className={`text-[13px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}>Client</span>
+          <span className="relative  text-white/45 text-[20px]">↔</span>
+          <span className={`text-[13px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}>Socket Server</span>
+       <span className="relative  text-white/45 text-[20px]">↔</span>
+          <span className={`text-[13px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}>Weather Station</span>
         </div>
 
-        <div className="-mt-3  text-xs text-white/65">
+        <div className="mt-1  text-xs text-white/70">
           <p>Last Updated at {formattedLastUpdated ?? ''}</p>
           <p>Remote Weather Station: {socketStatus.remote}</p>
         </div>
