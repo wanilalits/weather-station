@@ -211,7 +211,7 @@ else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving ra
       </div>
 
       <div className="mt-2 border-t border-white/15 pt-0">
-        <p className="m-1 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
+        <p className="m-1 ml-0 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
         <div className="flex items-center   font-semibold  whitespace-nowrap align-middle -mt-2 justify-between">
           <span className={`text-[13px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}>Client</span>
