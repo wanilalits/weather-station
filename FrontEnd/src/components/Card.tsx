@@ -13,6 +13,8 @@ type SocketStatus = {
 
 
 const Card: React.FC = () => {
+  const [weatherCode, setWeatherCode] = useState<number | null>(null);
+const [isDay, setIsDay] = useState(true);
   const [time, setTime] = useState(new Date());
   const [socketStatus, setSocketStatus] = useState<SocketStatus>({
     colour: '-1',
@@ -32,8 +34,50 @@ const Card: React.FC = () => {
   }, [latestUtcTime]);
 
   
+function getWeatherEmoji(code: number | null, isDay: boolean) {
+  if (code === null) return "❔";
 
-  useEffect(() => {
+  switch (code) {
+    case 0:
+      return isDay ? "☀️" : "🌙";
+
+    case 1:
+    case 2:
+      return isDay ? "🌤️" : "☁️";
+
+    case 3:
+      return "☁️";
+
+    case 45:
+    case 48:
+      return "🌫️";
+
+    case 51:
+    case 53:
+    case 55:
+      return "🌦️";
+
+    case 61:
+    case 63:
+    case 65:
+      return "🌧️";
+
+    case 71:
+    case 73:
+    case 75:
+      return "❄️";
+
+    case 95:
+      return "⛈️";
+
+    default:
+      return "🌥️";
+  }
+}
+
+const weatherIcon = getWeatherEmoji(weatherCode, isDay);
+ 
+useEffect(() => {
     const updateTime = () => setTime(new Date());
     updateTime();
     const now = new Date();
@@ -44,14 +88,41 @@ const Card: React.FC = () => {
       interval = setInterval(updateTime, 60000);
     }, delay);
 
+
+async function loadWeather() {
+    const res = await fetch(
+      "https://api.open-meteo.com/v1/forecast?latitude=18.5204&longitude=73.8567&current=weather_code,is_day"
+    );
+
+    const data = await res.json();
+
+    setWeatherCode(data.current.weather_code);
+    setIsDay(Boolean(data.current.is_day));
+  }
+
+  loadWeather();
+
+  const timer = setInterval(loadWeather, 30 * 60 * 1000);
+
+
+
     return () => {
+      clearInterval(timer)
       clearTimeout(timeout);
       if (interval) clearInterval(interval);
     };
-  }, []);
+
+
 
  
 
+
+
+
+
+
+
+  }, []);
   useEffect(() => {
   ///  console.log('📡 Socket Status Updated:', deviceData.socketStatus);
      
@@ -102,7 +173,7 @@ else if (deviceData.socketStatus?.stationStatus === "Not Connected, receiving ra
       </div>
 
       <div className="mt-6 flex items-center gap-4">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center  bg-white/12 text-5xl ">🌤️</div>
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center  bg-white/12 text-5xl ">    {weatherIcon}</div>
 
         <div className="min-w-0">
           <p className="text-lg font-medium text-white/95">Current Temperature</p>
