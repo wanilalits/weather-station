@@ -35,7 +35,7 @@ const [isDay, setIsDay] = useState(true);
 
   
 function getWeatherEmoji(code: number | null, isDay: boolean) {
-  if (code === null) return "❔";
+  if (code === null) return "🌥️";
 
   switch (code) {
     case 0:
