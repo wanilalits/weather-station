@@ -1,0 +1,29 @@
+@keyframes lineMove {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-lineMove {
+  animation: lineMove 1.2s linear infinite;
+  background-size: 50% 100%;
+}
+
+
+
+@keyframes lineMoverevrce {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+.animate-lineMoverevrce {
+  animation: lineMoverevrce 1.2s linear infinite;
+  background-size: 50% 100%;
+}
