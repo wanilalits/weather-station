@@ -174,6 +174,7 @@ const Card: React.FC = () => {
     {/* Icon */}
     <div className="flex h-full items-center">
       <Droplets size={22} className="text-cyan-300" />
+
     </div>
 
     {/* Content */}
@@ -298,10 +299,10 @@ const Card: React.FC = () => {
             <div className="flex items-center gap-2">
                                 { socketStatus.remote === 'Connected and Sending Data'?  
 <>   <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">✓</div>
-              <Monitor size={18} className="text-white/90" /></>
+              <RadioTower size={18} className="text-white/90" /></>
     :
        <> <div className="h-4 w-4 rounded-full bg-rose-500"></div>
-              <Monitor size={18} className="text-white/90" /></>
+              <RadioTower size={18} className="text-white/90" /></>
 }
             </div>
 
