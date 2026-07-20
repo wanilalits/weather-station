@@ -189,8 +189,8 @@ const Card: React.FC = () => {
         </span>
       </div>
 
-      <p className="mt-1 flex items-center gap-1 text-lg font-semibold">
-        <span className="tabular-nums">
+      <p className="mt-1 flex items-center gap-1 text-lg font-semibold ">
+        <span className="tabular-nums text-cyan-100">
           {latestSample?.humidity ?? 48}
         </span>
         <span className="text-sm text-white/70">
@@ -311,12 +311,7 @@ const Card: React.FC = () => {
 
             
             <p className="mt-2 text-[11px] font-medium"> Weather Station </p>
- { socketStatus.remote === 'Connected and Sending Data'? 
-    <p className="text-[10px] text-emerald-300"> Online </p>
-    :
-       <p className="text-[10px] text-rose-300"> Offline </p>
-}
-         
+ { socketStatus.remote === 'Connected and Sending Data'? <p className="text-[10px] text-emerald-300"> Online </p>:<p className="text-[10px] text-rose-300"> Offline </p>}
           </div>
         </div>
       </div>
