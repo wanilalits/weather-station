@@ -175,7 +175,7 @@ const Card: React.FC = () => {
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium text-white/65">Humidity</p>
-        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">↑ 1.2%</span>
+{/*         <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">↑ 1.2%</span> */}
       </div>
       <p className="mt-1 flex items-center gap-1 text-lg font-semibold ">
         <span className="tabular-nums text-cyan-100">{latestSample?.humidity ?? 48}</span>
