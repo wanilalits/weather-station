@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Droplets, Gauge, Clock3, RefreshCw, RadioTower, Server, Monitor } from 'lucide-react';
+import { Droplets, Gauge, Clock3, Wifi, RadioTower, Server, Monitor } from 'lucide-react';
 import type { RootState } from '../features/store';
 import { useSelector } from 'react-redux';
 import { getUTCtoLocalSyatemDate } from '../utils/formatDate';
@@ -74,7 +74,7 @@ const Card: React.FC = () => {
 
   const weatherIcon = getWeatherEmoji(weatherCode, isDay);
   
-
+   
   useEffect(() => {
     const updateTime = () => setTime(new Date());
     updateTime();
@@ -106,7 +106,7 @@ const Card: React.FC = () => {
     };
   }, []);
   useEffect(() => {
-     //console.log('📡 Socket Status Updated:', socketStatus);
+    // console.log('📡 Socket Status Updated:', deviceData.devices1?.[1]?.at(-1)?.rssi);
 
     if (deviceData.socketStatus?.stationStatus === 'Connected and Sending Data' && deviceData.socketStatus?.status === 'Connected') {
       setSocketStatus((prev) => ({ ...prev, colour: '1', status: deviceData.socketStatus.status, remote: deviceData.socketStatus.stationStatus }));
@@ -171,31 +171,15 @@ const Card: React.FC = () => {
       <div className="mt-4 grid grid-cols-2 gap-6">
        <div className="rounded-xl p-1 ring-2 ring-white/15">
   <div className="flex items-start gap-3">
-    {/* Icon */}
-    <div className="flex h-full items-center">
-      <Droplets size={22} className="text-cyan-300" />
-
-    </div>
-
-    {/* Content */}
+    <div className="flex h-full items-center"><Droplets size={23}  mt-3 className="text-cyan-300  mt-3  " /></div>
     <div className="flex-1">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-white/65">
-          Humidity
-        </p>
-
-        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
-          ↑ 1.2%
-        </span>
+        <p className="text-xs font-medium text-white/65">Humidity</p>
+        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">↑ 1.2%</span>
       </div>
-
       <p className="mt-1 flex items-center gap-1 text-lg font-semibold ">
-        <span className="tabular-nums text-cyan-100">
-          {latestSample?.humidity ?? 48}
-        </span>
-        <span className="text-sm text-white/70">
-          %
-        </span>
+        <span className="tabular-nums text-cyan-100">{latestSample?.humidity ?? 48}</span>
+        <span className="text-sm text-white/70">%</span>
       </p>
     </div>
   </div>
@@ -205,7 +189,7 @@ const Card: React.FC = () => {
   <div className="flex items-start gap-3">
     {/* Icon */}
     <div className="flex items-center">
-      <Gauge size={22} className="text-yellow-300" />
+      <Gauge size={22} className="text-yellow-300 mt-3 " />
     </div>
 
     {/* Content */}
@@ -319,26 +303,10 @@ const Card: React.FC = () => {
       {/* Footer */}
 
       <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2 text-[11px] text-white/70">
-        <div className="flex items-center gap-2">
-          <RefreshCw size={13} />{' '}
-          <span>
-            {' '}
-            Updated
-            {/*  <span className="text-emerald-300">
-  {latestUtcTime
-    ? (() => {
-        const diff = Math.floor((Date.now() - new Date(latestUtcTime).getTime()) / 1000);
+     
+        <div className="flex items-center gap-2"><Wifi size={13} />{' '}
+        <span>{' '}Weather Station Signal: {Math.max(0,Math.min(100, 2 * (Number(deviceData.devices1?.[1]?.at(-1)?.rssi ?? -100) + 100)))}%
 
-        return diff < 60
-          ? `${diff} sec ago`
-          : diff < 3600
-          ? `${Math.floor(diff / 60)} min ago`
-          : diff < 86400
-          ? `${Math.floor(diff / 3600)} hr ago`
-          : `${Math.floor(diff / 86400)} day ago`;
-      })()
-    : ""}
-</span> */}
           </span>
         </div>
         <div className="flex items-center gap-2">
