@@ -101,11 +101,11 @@ dispatch( websocketStatus({ status: "Connected" })
 
     // Message received
     ws.onmessage = (event) => {
-    // console.log("📩 Raw message:", event.data);
+     console.log("📩 Raw message:", event.data);
 
       try {
         const data = JSON.parse(event.data);
-          //  console.log("📩 Raw message:", data)
+          // console.log("📩 Raw message:", data)
         // Update last message time
         lastMessageTimeRef.current = Date.now();
        data[0].utcTime = new Date().toISOString();
