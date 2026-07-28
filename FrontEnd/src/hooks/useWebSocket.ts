@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import {  websocketStatus} from "../features/WebsocketDataSlice";
 export const useWebSocket = () => {
 const manualDisconnectRef = useRef(false);
+
   const dispatch = useDispatch();
   // WebSocket instance
   const wsRef = useRef<WebSocket | null>(null);
@@ -101,18 +102,20 @@ dispatch( websocketStatus({ status: "Connected" })
 
     // Message received
     ws.onmessage = (event) => {
-     console.log("📩 Raw message:", event.data);
+    // console.log("📩 Raw message:", event.data);
 
       try {
         const data = JSON.parse(event.data);
-          // console.log("📩 Raw message:", data)
+        //  console.log("📩 Raw message:", data[0]?.connectedClients)
         // Update last message time
         lastMessageTimeRef.current = Date.now();
        data[0].utcTime = new Date().toISOString();
 
 dispatch({ type: "SOCKET_DATA",   payload: data, });
-
- {data[0].deviceId !==null && data[0].deviceId !=="frontend" && dispatch( websocketStatus({ stationStatus: "Connected and Sending Data" }));}
+if (data[0]?.connectedClients != null) {
+  dispatch( websocketStatus({ connectedClients: data[0].connectedClients,}) );
+}
+{data[0].deviceId !==null && data[0].deviceId !=="frontend" && dispatch( websocketStatus({ stationStatus: "Connected and Sending Data" }));}
 
       } catch (err) {
         console.error("❌ JSON Parse Error:", err);

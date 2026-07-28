@@ -106,6 +106,8 @@ const Card: React.FC = () => {
     };
   }, []);
   useEffect(() => {
+
+console.log('📡 Socket Status Updated:', deviceData.socketStatus.connectedClients)
     // console.log('📡 Socket Status Updated:', deviceData.devices1?.[1]?.at(-1)?.rssi);
 
     if (deviceData.socketStatus?.stationStatus === 'Connected and Sending Data' && deviceData.socketStatus?.status === 'Connected') {
@@ -141,11 +143,14 @@ const Card: React.FC = () => {
             })}
           </p>
         </div>
-
+<div >
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-medium text-white/90 ring-1 ring-white/15">
-          <span className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`} />
-          <span>{statusLabel}</span>
-        </div>
+          <span className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`} /> <span>{statusLabel}</span>
+    </div>
+    <span className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-normal text-white/75 " > { deviceData.socketStatus.connectedClients} watching</span>
+
+    </div>
+    
       </div>
 
       <div className="mt-2 flex items-center gap-0">

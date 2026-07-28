@@ -96,7 +96,7 @@ const clientSizeBroadcast = () => {
         });
 };
 
-//clientSizeBroadcast every 10 seconds
+//clientSizeBroadcast every 100 seconds
 setInterval(() => {
   clientSizeBroadcast ()
 }, 100000);
