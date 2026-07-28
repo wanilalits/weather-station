@@ -70,7 +70,7 @@ const id = data.deviceId;
 websocketStatus: (state, action )=>{
 
   const data = action.payload;
- 
+ console.log("📡 [REDUCER] WebSocket status update:", data);
  if (data) {
  state.socketStatus = {
   ...state.socketStatus,

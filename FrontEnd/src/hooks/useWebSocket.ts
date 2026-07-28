@@ -102,7 +102,7 @@ dispatch( websocketStatus({ status: "Connected" })
 
     // Message received
     ws.onmessage = (event) => {
-    // console.log("📩 Raw message:", event.data);
+   // console.log("📩 Raw message:", event.data);
 
       try {
         const data = JSON.parse(event.data);
@@ -115,7 +115,10 @@ dispatch({ type: "SOCKET_DATA",   payload: data, });
 if (data[0]?.connectedClients != null) {
   dispatch( websocketStatus({ connectedClients: data[0].connectedClients,}) );
 }
-{data[0].deviceId !==null && data[0].deviceId !=="frontend" && dispatch( websocketStatus({ stationStatus: "Connected and Sending Data" }));}
+console.log( data[0].deviceId);
+//deviceId !== null && deviceId !== undefined
+{data[0].deviceId !==null && data[0].deviceId !==undefined && data[0].deviceId !=="frontend" && 
+  dispatch( websocketStatus({ stationStatus: "Connected and Sending Data" }));}
 
       } catch (err) {
         console.error("❌ JSON Parse Error:", err);

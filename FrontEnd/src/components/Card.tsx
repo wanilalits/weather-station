@@ -107,7 +107,7 @@ const Card: React.FC = () => {
   }, []);
   useEffect(() => {
 
-console.log('📡 Socket Status Updated:', deviceData.socketStatus.connectedClients)
+//console.log('📡 Socket Status Updated:', deviceData.socketStatus)
     // console.log('📡 Socket Status Updated:', deviceData.devices1?.[1]?.at(-1)?.rssi);
 
     if (deviceData.socketStatus?.stationStatus === 'Connected and Sending Data' && deviceData.socketStatus?.status === 'Connected') {
