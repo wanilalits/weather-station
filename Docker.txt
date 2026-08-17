@@ -1,0 +1,22 @@
+Build/Create Frontend container
+docker build -t weather-frontend ./FrontEnd
+
+Run FrontEnd Container 
+docker run -d `
+  --name weather-frontend `
+  -p 5173:5173 `
+  -v "${PWD}\FrontEnd:/app" `
+  -v /app/node_modules `
+  weather-frontend
+
+Build/Create Backend container
+docker build -t weather-backend ./Backend
+
+Run Backend container
+docker run -d ^
+--name weather-backend ^
+-p 5000:5000 ^
+--env-file Backend\.env ^
+weather-backend
+
+docker compose up / docker compose up --build

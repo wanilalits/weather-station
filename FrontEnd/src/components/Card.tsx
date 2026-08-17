@@ -73,8 +73,7 @@ const Card: React.FC = () => {
   }
 
   const weatherIcon = getWeatherEmoji(weatherCode, isDay);
-  
-   
+
   useEffect(() => {
     const updateTime = () => setTime(new Date());
     updateTime();
@@ -106,8 +105,7 @@ const Card: React.FC = () => {
     };
   }, []);
   useEffect(() => {
-
-//console.log('📡 Socket Status Updated:', deviceData.socketStatus)
+    //console.log('📡 Socket Status Updated:', deviceData.socketStatus)
     // console.log('📡 Socket Status Updated:', deviceData.devices1?.[1]?.at(-1)?.rssi);
 
     if (deviceData.socketStatus?.stationStatus === 'Connected and Sending Data' && deviceData.socketStatus?.status === 'Connected') {
@@ -143,23 +141,21 @@ const Card: React.FC = () => {
             })}
           </p>
         </div>
-<div >
-        <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-medium text-white/90 ring-1 ring-white/15">
-          <span className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`} /> <span>{statusLabel}</span>
-    </div>
-    <span className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-normal text-white/75 " > { deviceData.socketStatus.connectedClients} watching</span>
-
-    </div>
-    
+        <div>
+          <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-medium text-white/90 ring-1 ring-white/15">
+            <span className={`h-2.5 w-2.5 rounded-full shadow-md ${statusStyles}`} /> <span>{statusLabel}</span>
+          </div>
+          <span className="flex shrink-0 items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-normal text-white/75 "> {deviceData.socketStatus.connectedClients} watching</span>
+        </div>
       </div>
 
       <div className="mt-2 flex items-center gap-0">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center text-5xl align-left -ml-3">
-          <span >{weatherIcon}</span>
+          <span>{weatherIcon}</span>
         </div>
 
         <div className="min-w-0">
-          <p  className="text-lg font-medium text-white/95">Current Temperature</p>
+          <p className="text-lg font-medium text-white/95">Current Temperature</p>
 
           <div className="mt-1 flex items-end">
             <span className="text-5xl font-semibold leading-none tabular-nums">{String(Number(latestSample?.tempAHT ?? 27).toFixed(1)).split('.')[0]}.</span>
@@ -172,49 +168,45 @@ const Card: React.FC = () => {
           </div>
         </div>
       </div>
-{/* Humidity + Air Pressure */}
+      {/* Humidity + Air Pressure */}
       <div className="mt-4 grid grid-cols-2 gap-6">
-       <div className="rounded-xl p-1 ring-2 ring-white/15">
-  <div className="flex items-start gap-3">
-    <div className="flex h-full items-center"><Droplets size={23}  mt-3 className="text-cyan-300  mt-3  " /></div>
-    <div className="flex-1">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-white/65">Humidity</p>
-{/*         <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">↑ 1.2%</span> */}
-      </div>
-      <p className="mt-1 flex items-center gap-1 text-lg font-semibold ">
-        <span className="tabular-nums text-cyan-100">{latestSample?.humidity ?? 48}</span>
-        <span className="text-sm text-white/70">%</span>
-      </p>
-    </div>
-  </div>
-</div>
+        <div className="rounded-xl p-1 ring-2 ring-white/15">
+          <div className="flex items-start gap-3">
+            <div className="flex h-full items-center">
+              <Droplets size={23} mt-3 className="text-cyan-300  mt-3  " />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-white/65">Humidity</p>
+                {/*         <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">↑ 1.2%</span> */}
+              </div>
+              <p className="mt-1 flex items-center gap-1 text-lg font-semibold ">
+                <span className="tabular-nums text-cyan-100">{latestSample?.humidity ?? 48}</span>
+                <span className="text-sm text-white/70">%</span>
+              </p>
+            </div>
+          </div>
+        </div>
 
-      <div className="rounded-xl p-1 ring-2 ring-white/15">
-  <div className="flex items-start gap-3">
-    {/* Icon */}
-    <div className="flex items-center">
-      <Gauge size={22} className="text-yellow-300 mt-3 " />
-    </div>
+        <div className="rounded-xl p-1 ring-2 ring-white/15">
+          <div className="flex items-start gap-3">
+            {/* Icon */}
+            <div className="flex items-center">
+              <Gauge size={22} className="text-yellow-300 mt-3 " />
+            </div>
 
-    {/* Content */}
-    <div className="flex-1">
-      <p className="text-xs font-medium text-white/65">
-        Air Pressure
-      </p>
+            {/* Content */}
+            <div className="flex-1">
+              <p className="text-xs font-medium text-white/65">Air Pressure</p>
 
-      <p className="mt-1 flex items-center gap-1 text-lg font-semibold">
-        <span className="tabular-nums text-yellow-300">
-          {latestSample?.pressure ?? 824}
-        </span>
+              <p className="mt-1 flex items-center gap-1 text-lg font-semibold">
+                <span className="tabular-nums text-yellow-300">{latestSample?.pressure ?? 824}</span>
 
-        <span className="text-sm text-white/70">
-          hPa
-        </span>
-      </p>
-    </div>
-  </div>
-</div>    
+                <span className="text-sm text-white/70">hPa</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Connection Status */}
@@ -226,36 +218,33 @@ const Card: React.FC = () => {
           {/* Client */}
           <div className="flex w-[95px] flex-col items-center rounded-xl bg-white/8 py-2 ring-1 ring-white/10">
             <div className="flex items-center gap-2">
-           
-            
-                     { socketStatus.status === "Connected"? 
-<>   <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">✓</div>
-              <Monitor size={18} className="text-white/90" /></>
-    :
-       <> <div className="h-4 w-4 rounded-full bg-rose-500"></div>
-              <Monitor size={18} className="text-white/90" /></>
-}
-            
+              {socketStatus.status === 'Connected' ? (
+                <>
+                  {' '}
+                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">✓</div>
+                  <Monitor size={18} className="text-white/90" />
+                </>
+              ) : (
+                <>
+                  {' '}
+                  <div className="h-4 w-4 rounded-full bg-rose-500"></div>
+                  <Monitor size={18} className="text-white/90" />
+                </>
+              )}
             </div>
             <p className="mt-2 text-[11px] font-medium">Client</p>
-                  { socketStatus.status === "Connected"? 
-    <p className="text-[10px] text-emerald-300"> Online </p>
-    :
-       <p className="text-[10px] text-rose-300"> Offline </p>
-}
+            {socketStatus.status === 'Connected' ? <p className="text-[10px] text-emerald-300"> Online </p> : <p className="text-[10px] text-rose-300"> Offline </p>}
           </div>
 
           {/* Line */}
-       
-<div className="relative flex-1 h-[2px] overflow-hidden rounded-full bg-white/10">
-  <div
-    className={`absolute inset-0 w-[200%]  ${
-      socketStatus.status === "Connected"
-        ? "animate-lineMove bg-[linear-gradient(90deg,transparent,transparent,#34d399,transparent,transparent)]"
-        : " animate-lineMoverevrce bg-[linear-gradient(90deg,transparent,transparent,#ef4444,transparent,transparent)]"
-    }`}
-  />
-</div>
+
+          <div className="relative flex-1 h-[2px] overflow-hidden rounded-full bg-white/10">
+            <div
+              className={`absolute inset-0 w-[200%]  ${
+                socketStatus.status === 'Connected' ? 'animate-lineMove bg-[linear-gradient(90deg,transparent,transparent,#34d399,transparent,transparent)]' : ' animate-lineMoverevrce bg-[linear-gradient(90deg,transparent,transparent,#ef4444,transparent,transparent)]'
+              }`}
+            />
+          </div>
           {/* Server */}
           <div className="flex w-[95px] flex-col items-center rounded-xl bg-white/8 py-2 ring-1 ring-white/10">
             <div className="flex items-center gap-2">
@@ -263,44 +252,40 @@ const Card: React.FC = () => {
               <Server size={18} className="text-white/90" />
             </div>
             <p className="mt-2 text-[11px] font-medium"> Socket Server </p>
-            { socketStatus.status === "Connected"? 
-    <p className="text-[10px] text-emerald-300"> Online </p>
-    :
-       <p className="text-[10px] text-rose-300"> Online </p>
-}
+            {socketStatus.status === 'Connected' ? <p className="text-[10px] text-emerald-300"> Online </p> : <p className="text-[10px] text-rose-300"> Online </p>}
           </div>
 
           {/* Line */}
 
-<div className="relative flex-1 h-[2px] overflow-hidden rounded-full bg-white/10">
-  <div
-    className={`absolute inset-0 w-[200%]  ${
-      socketStatus.remote === "Connected and Sending Data"
-        ? "animate-lineMove bg-[linear-gradient(90deg,transparent,transparent,#34d399,transparent,transparent)]"
-        : " animate-lineMoverevrce bg-[linear-gradient(90deg,transparent,transparent,#ef4444,transparent,transparent)]"
-    }`}
-  />
-</div>
+          <div className="relative flex-1 h-[2px] overflow-hidden rounded-full bg-white/10">
+            <div
+              className={`absolute inset-0 w-[200%]  ${
+                socketStatus.remote === 'Connected and Sending Data' ? 'animate-lineMove bg-[linear-gradient(90deg,transparent,transparent,#34d399,transparent,transparent)]' : ' animate-lineMoverevrce bg-[linear-gradient(90deg,transparent,transparent,#ef4444,transparent,transparent)]'
+              }`}
+            />
+          </div>
 
           {/* Station */}
 
           <div className="flex w-[95px] flex-col items-center rounded-xl bg-white/8 px-0 py-2 ring-1 ring-white/10">
             <div className="flex items-center gap-2">
-                                { socketStatus.remote === 'Connected and Sending Data'?  
-<>   <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">✓</div>
-              <RadioTower size={18} className="text-white/90" /></>
-    :
-       <> <div className="h-4 w-4 rounded-full bg-rose-500"></div>
-              <RadioTower size={18} className="text-white/90" /></>
-}
+              {socketStatus.remote === 'Connected and Sending Data' ? (
+                <>
+                  {' '}
+                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">✓</div>
+                  <RadioTower size={18} className="text-white/90" />
+                </>
+              ) : (
+                <>
+                  {' '}
+                  <div className="h-4 w-4 rounded-full bg-rose-500"></div>
+                  <RadioTower size={18} className="text-white/90" />
+                </>
+              )}
             </div>
 
-
-
-
-            
             <p className="mt-2 text-[11px] font-medium"> Weather Station </p>
- { socketStatus.remote === 'Connected and Sending Data'? <p className="text-[10px] text-emerald-300"> Online </p>:<p className="text-[10px] text-rose-300"> Offline </p>}
+            {socketStatus.remote === 'Connected and Sending Data' ? <p className="text-[10px] text-emerald-300"> Online </p> : <p className="text-[10px] text-rose-300"> Offline </p>}
           </div>
         </div>
       </div>
@@ -308,15 +293,19 @@ const Card: React.FC = () => {
       {/* Footer */}
 
       <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2 text-[11px] text-white/70">
-     
-        <div className="flex items-center gap-2"><Wifi size={13} />{' '}
-        <span>{' '}Weather Station Signal: {Math.max(0,Math.min(100, 2 * (Number(deviceData.devices1?.[1]?.at(-1)?.rssi ?? -100) + 100)))}%
-
-          </span>
+        <div className="flex items-center gap-2">
+          <Wifi size={13} /> <span> Weather Station Signal: {Math.max(0, Math.min(100, 2 * (Number(deviceData.devices1?.[1]?.at(-1)?.rssi ?? -100) + 100)))}%</span>
         </div>
         <div className="flex items-center gap-2">
           <Clock3 size={13} /> <span>{formattedLastUpdated ?? ''}</span>
         </div>
+        <button
+          onClick={() => {
+            window.open('https://mywebsite.com', '_app');
+          }}
+        >
+          View as App
+        </button>
       </div>
     </div>
   );
