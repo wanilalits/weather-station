@@ -301,7 +301,7 @@ const Card: React.FC = () => {
         </div>
         <button
           onClick={() => {
-            window.open('https://mywebsite.com', '_app');
+            window.open('https://weather-station-1-jaaq.onrender.com/WeatherDashboard', '_app');
           }}
         >
           View as App
