@@ -299,13 +299,7 @@ const Card: React.FC = () => {
         <div className="flex items-center gap-2">
           <Clock3 size={13} /> <span>{formattedLastUpdated ?? ''}</span>
         </div>
-        <button
-          onClick={() => {
-            window.open('https://weather-station-1-jaaq.onrender.com/WeatherDashboard', '_app');
-          }}
-        >
-          View as App
-        </button>
+      
       </div>
     </div>
   );
@@ -313,18 +307,4 @@ const Card: React.FC = () => {
 
 export default Card;
 
-/*  <div className="mt-2 border-t border-white/15 pt-0">
-        <p className="m-1 ml-0 text-xs font-medium uppercase tracking-wide text-white/60"> Socket Status</p>
 
-        <div className="flex items-center   font-semibold  whitespace-nowrap align-middle -mt-2 justify-between">
-          <span className={`text-[13px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}>Client</span>
-          <span className="relative  text-white/45 text-[20px]">↔</span>
-          <span className={`text-[13px] ${socketStatus.status === 'Connected' ? 'text-emerald-300' : 'text-rose-300'}`}>Socket Server</span>
-          <span className="relative  text-white/45 text-[20px]">↔</span>
-          <span className={`text-[13px] ${socketStatus.remote === 'Connected and Sending Data' ? 'text-emerald-300' : 'text-rose-300'}`}>Weather Station</span>
-        </div>
-        <div className="mt-1  text-xs text-white/70">
-          <p>⏱Last Updated at {formattedLastUpdated ?? ''}</p>
-          <p>Remote Weather Station: {socketStatus.remote}</p>
-        </div>
-      </div> */
